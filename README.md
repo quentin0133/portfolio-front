@@ -1,27 +1,45 @@
-# Portfolio
+# Mon Portfolio
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.10.
+Bienvenue sur mon portfolio ! Ici, vous trouverez une sélection de mes projets, mes compétences et mon expérience. Ce portfolio est conçu pour mettre en valeur mon travail et mon style.
 
-## Development server
+## Table des matières
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- [À propos de moi](#à-propos-de-moi)
+- [Compétences](#compétences)
+- [Projets](#projets)
+- [Contact](#contact)
 
-## Code scaffolding
+## À propos de moi
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Je suis [Ton Nom], un [ta profession ou domaine, par exemple "développeur web" ou "designer UX/UI"] passionné. Avec [nombre d'années d'expérience], j'ai travaillé sur divers projets, développant des compétences solides en [mentionner les technologies ou outils principaux].
 
-## Build
+## Compétences
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Langages de programmation** : HTML, CSS, JavaScript, [ajoute d'autres langages ici]
+- **Frameworks et bibliothèques** : Tailwind CSS, React, [ajoute d'autres frameworks ici]
+- **Outils** : Git, Figma, [ajoute d'autres outils ici]
+- **Autres compétences** : [mentionner d'autres compétences pertinentes]
 
-## Running unit tests
+## Projets
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### [Jean-petebonbon](lien_vers_projet)
+- **Description** : Une brève description du projet.
+- **Technologies utilisées** : HTML, CSS, JavaScript, [ajoute d'autres technologies ici].
 
-## Running end-to-end tests
+### [Another Lost Soul](lien_vers_projet)
+- **Description** : Une brève description du projet.
+- **Technologies utilisées** : HTML, CSS, JavaScript, [ajoute d'autres technologies ici].
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### [A Soul's Journey](lien_vers_projet)
+- **Description** : Une brève description du projet.
+- **Technologies utilisées** : HTML, CSS, JavaScript, [ajoute d'autres technologies ici].
 
-## Further help
+## Contact
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Vous pouvez me contacter à quentin.yahia.pro@gmail.com :
+
+- [LinkedIn](https://www.linkedin.com/in/quentin-yahia/)
+- [GitHub](https://github.com/quentin0133)
+- [GitLab](https://gitlab.com/quentin0133)
+
+Merci de visiter mon portfolio, et n'hésitez pas à me contacter si vous avez des questions ou des opportunités de collaboration !
