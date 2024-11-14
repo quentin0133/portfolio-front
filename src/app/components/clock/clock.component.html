@@ -1,0 +1,28 @@
+<div
+  [@flotterAnimation]="floatState"
+  class="flex justify-center relative"
+>
+  <img
+    alt="Une montre à gousset tenu par une main, elle flotte de haut en bas comme un nuage"
+    class="w-[28rem]"
+    src="assets/clock.png"
+  />
+  <img
+    alt="Une aiguille indiquant les heures, séparé de l'horloge, elle permet d'indiquer dynamiquement l'heure"
+    class="absolute w-[28rem]"
+    [ngStyle]="{'transform': 'rotate(' + hourAngle + 'deg)'}"
+    src="assets/aiguille_heure.png"
+  />
+  <img
+    alt="Une aiguille indiquant les minutes, séparé de l'horloge, elle permet d'indiquer dynamiquement l'heure"
+    class="absolute w-[28rem]"
+    [ngStyle]="{'transform': 'rotate(' + minuteAngle + 'deg)'}"
+    src="assets/aiguille_minute.png"
+  />
+  <img
+    alt="Une aiguille indiquant les secondes, séparé de l'horloge, elle permet d'indiquer dynamiquement l'heure"
+    class="absolute w-[28rem]"
+    [ngStyle]="{'transform': 'rotate(' + secondAngle + 'deg)'}"
+    src="assets/aiguille_seconde.png"
+  />
+</div>

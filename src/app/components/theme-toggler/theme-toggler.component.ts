@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { isDarkThemePreferred } from '../../tools/theme-utils';
+import { ThemeService } from '../../services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-theme-toggler',
@@ -10,38 +11,29 @@ import { isDarkThemePreferred } from '../../tools/theme-utils';
   styleUrl: './theme-toggler.component.css',
 })
 export class ThemeTogglerComponent implements OnInit, OnDestroy {
-  isDarkMode: boolean = true;
+  private themeChangeSubscription: Subscription | undefined;
 
-  private mediaQueryListener:
-    | ((event: MediaQueryListEvent) => void)
-    | undefined;
+  isDarkMode: boolean = false;
+
+  constructor(private readonly themeService: ThemeService) {}
 
   ngOnInit(): void {
-    this.setTheme();
-    this.mediaQueryListener = this.onThemeChange.bind(this);
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', this.mediaQueryListener);
+    this.isDarkMode = this.themeService.isDarkThemePreferred();
+    this.themeChangeSubscription = this.themeService.isDarkMode.subscribe(
+      (isDarkMode) => {
+        this.isDarkMode = isDarkMode;
+      },
+    );
   }
 
   ngOnDestroy() {
-    if (this.mediaQueryListener)
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .removeEventListener('change', this.mediaQueryListener);
+    if (this.themeChangeSubscription) {
+      this.themeChangeSubscription.unsubscribe();
+    }
   }
 
   onToggleThemeClick() {
-    localStorage.setItem('theme', isDarkThemePreferred() ? 'light' : 'dark');
-    this.setTheme();
-  }
-
-  onThemeChange() {
-    this.setTheme();
-  }
-
-  setTheme() {
-    this.isDarkMode = isDarkThemePreferred();
-    document.body.classList.toggle('dark', this.isDarkMode);
+    localStorage.setItem('theme', this.isDarkMode ? 'light' : 'dark');
+    this.themeService.updateTheme();
   }
 }

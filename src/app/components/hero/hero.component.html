@@ -1,6 +1,29 @@
-<div [@openFromTop]="state" class="h-3/4">
+<div class="absolute w-full h-[80%] -z-10">
   <img alt="Un homme sur son ordinateur en train de coder" class="w-full h-full object-cover" src="assets/bg.jpg">
 </div>
-<div class="absolute flex justify-center text-2xl -translate-x-1/2 left-1/2 top-1/3 w-3/4">
-  &gt;&ensp;<p [innerHTML]="text"></p>&ensp;&lt;
+<div class="flex w-full h-[80%] px-60 gap-6 justify-around items-center">
+  <div class="w-[50%] min-h-60 flex flex-col gap-4 p-6 bg-white dark:bg-neutral-900 rounded-lg bg-opacity-75 dark:bg-opacity-75">
+    <div id="status">
+      <span
+        class="inline-flex text-md items-center gap-x-2 py-1.5 px-3 text-red-600 rounded-full font-medium bg-slate-100 border-4 border-red-600 dark:bg-neutral-900 dark:bg-opacity-75">
+        <span class="flex relative">
+        <span class="animate-ping absolute size-3.5 inline-block rounded-full bg-red-600"></span><span class="size-3.5 inline-block rounded-full bg-red-600"></span>
+        </span>
+        Status : disponible
+      </span>
+    </div>
+    <div class="text-4xl" id="title-hero">
+      <div class="flex mb-2">
+        ><p [innerHTML]="welcomeText"></p>
+      </div>
+      <div class="flex">
+        ><p [innerHTML]="qualityText"></p>
+      </div>
+    </div>
+    <div class="text-xl" id="description-hero">
+      <p>Je suis un passionnée du monde du développement</p>
+      <p>N'hésitez pas à changer de thème (<span><app-theme-toggler class="align-middle" /></span>) pour découvrir l'autre thème</p>
+    </div>
+  </div>
+  <app-clock></app-clock>
 </div>

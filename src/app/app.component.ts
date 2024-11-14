@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { isDarkThemePreferred } from './tools/theme-utils';
 import { NgClass } from '@angular/common';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -27,11 +27,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     | ((event: MediaQueryListEvent) => void)
     | undefined;
 
-  constructor(private readonly renderer: Renderer2) {}
+  constructor(
+    private readonly themeService: ThemeService,
+    private readonly renderer: Renderer2,
+  ) {}
 
   ngOnInit(): void {
-    this.setTheme();
-    this.mediaQueryListener = this.onThemeChange.bind(this);
+    this.themeService.updateTheme();
+    this.mediaQueryListener = () => this.themeService.updateTheme();
     window
       .matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', this.mediaQueryListener);
@@ -54,10 +57,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onThemeChange() {
-    this.setTheme();
-  }
-
-  setTheme() {
-    document.body.classList.toggle('dark', isDarkThemePreferred());
+    this.themeService.updateTheme();
   }
 }
