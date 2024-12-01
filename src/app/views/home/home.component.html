@@ -1,14 +1,51 @@
-<section class="relative h-full">
-  <app-hero />
+<section #section class="relative h-full">
+  <app-hero/>
 </section>
-<section class="relative h-full">
-  <app-terminal
-    #terminal
-    [height]="'260px'"
-    [label]="'Cipher'"
-    [left]="'calc(50% - 500px)'"
-    [title]="'Quentin_YAHIA.exe'"
-    [top]="'calc(50% - 400px)'"
-    [width]="'1000px'"
-  />
+<section #section class="relative h-full">
+  <p>Section 2</p>
 </section>
+<section #section class="relative h-full">
+  <p>Section 3</p>
+</section>
+<section #section class="relative h-full">
+  <p>Section 4</p>
+</section>
+<ng-container *ngIf="sections">
+  <button
+    (click)="goToPreviousSection()"
+    [disabled]="currentSectionIndex === 0"
+    [ngClass]="currentSectionIndex === 0 ? 'opacity-0' : 'opacity-50 hover:opacity-100'"
+    class="absolute transform p-[0.1rem] -translate-x-1/2 top-[15%] z-10 left-1/2 bg-white dark:bg-neutral-700 rounded-3xl transition-all size-[1.75rem] duration-300 hover:scale-125"
+    id="arrow-scroll-up"
+  >
+    <svg class="w-full" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke-linecap="round"
+            stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <button
+    (click)="goToNextSection()"
+    [disabled]="currentSectionIndex === sections.length - 1"
+    [ngClass]="currentSectionIndex === sections.length - 1 ? 'opacity-0' : 'opacity-50 hover:opacity-100'"
+    class="absolute transform p-[0.1rem] -translate-x-1/2 bottom-[7.5%] z-10 left-1/2 bg-white dark:bg-neutral-700 rounded-3xl transition-all size-[1.75rem] duration-300 hover:scale-125"
+    id="arrow-scroll-down"
+  >
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke-linecap="round"
+            stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="absolute -translate-y-1/2 top-1/2 transform right-16 border-2 border-slate-600 bg-white p-1 gap-2 hidden flex-col rounded-2xl lg:flex dark:border-neutral-50 dark:bg-neutral-700">
+    <input
+      *ngFor="let i of sections.length | range"
+      class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+      name="hs-default-radio"
+      type="radio"
+      [checked]="currentSectionIndex === i"
+      (click)="goToSection(i)"
+      (keydown)="onPressEnterNav($event, i)"
+    >
+  </div>
+</ng-container>

@@ -1,18 +1,26 @@
 <div class="absolute w-full h-[80%] -z-10">
-  <img alt="Un homme sur son ordinateur en train de coder" class="w-full h-full object-cover" src="assets/bg.jpg">
+  <ng-container *ngIf="isDarkMode; else bgLightMode">
+    <app-bg-dark-mode-hero></app-bg-dark-mode-hero>
+  </ng-container>
+  <ng-template #bgLightMode>
+    <img alt="Un dessin montrant un paysage au dessus des nuages, il a un côté paradis"
+         class="w-full h-full object-cover -z-10" src="assets/time/bg-light.jpg">
+  </ng-template>
 </div>
-<div class="flex w-full h-[80%] px-60 gap-6 justify-around items-center">
-  <div class="w-[50%] min-h-60 flex flex-col gap-4 p-6 bg-white dark:bg-neutral-900 rounded-lg bg-opacity-75 dark:bg-opacity-75">
+<div class="flex w-full h-[80%] px-4 2xl:px-42 xl:px-38 lg:px-28 md:px-12 sm:px-4 gap-6 justify-around items-center">
+  <div
+    class="min-h-60 flex flex-col sm:gap-4 gap-0 p-6 bg-white dark:bg-neutral-900 rounded-lg bg-opacity-75 dark:bg-opacity-75">
     <div id="status">
       <span
-        class="inline-flex text-md items-center gap-x-2 py-1.5 px-3 text-red-600 rounded-full font-medium bg-slate-100 border-4 border-red-600 dark:bg-neutral-900 dark:bg-opacity-75">
+        class="inline-flex lg:text-md sm:text-sm text-xs items-center gap-x-2 py-1.5 px-3 text-red-600 rounded-full font-medium bg-slate-100 border-4 border-red-600 dark:bg-neutral-900 dark:bg-opacity-75">
         <span class="flex relative">
-        <span class="animate-ping absolute size-3.5 inline-block rounded-full bg-red-600"></span><span class="size-3.5 inline-block rounded-full bg-red-600"></span>
+        <span class="animate-ping absolute size-3.5 inline-block rounded-full bg-red-600"></span><span
+          class="size-3.5 inline-block rounded-full bg-red-600"></span>
         </span>
         Status : disponible
       </span>
     </div>
-    <div class="text-4xl" id="title-hero">
+    <div class="2xl:text-4xl lg:text-3xl md:text-2xl sm:text-xl text-md" id="title-hero">
       <div class="flex mb-2">
         ><p [innerHTML]="welcomeText"></p>
       </div>
@@ -20,10 +28,17 @@
         ><p [innerHTML]="qualityText"></p>
       </div>
     </div>
-    <div class="text-xl" id="description-hero">
+    <div class="2xl:text-4xl lg:text-lg md:text-md text-sm" id="description-hero">
       <p>Je suis un passionnée du monde du développement</p>
-      <p>N'hésitez pas à changer de thème (<span><app-theme-toggler class="align-middle" /></span>) pour découvrir l'autre thème</p>
+      <p>N'hésitez pas à changer de thème (<span><app-theme-toggler class="align-middle"/></span>) pour découvrir
+        l'autre thème
+      </p>
     </div>
   </div>
-  <app-clock></app-clock>
+  <ng-container *ngIf="isDarkMode; else iconLightMode">
+    <img alt="Un trou noir aspirant des étoiles" src="assets/space/black-hole.png" />
+  </ng-container>
+  <ng-template #iconLightMode>
+    <app-clock></app-clock>
+  </ng-template>
 </div>

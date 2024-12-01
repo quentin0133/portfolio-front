@@ -1,16 +1,12 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForOf, NgIf, NgStyle } from '@angular/common';
 import { TerminalComponent } from '../info-box/terminal/terminal.component';
-import {
-  animate,
-  keyframes,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
 import { setTimeoutAsync } from '../../tools/js-native-utils';
 import { ClockComponent } from '../clock/clock.component';
 import { ThemeTogglerComponent } from '../theme-toggler/theme-toggler.component';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../services/theme.service';
+import { BgDarkModeHeroComponent } from '../bg-dark-mode-hero/bg-dark-mode-hero.component';
 
 const WRITING_SPEED = 65;
 const ERASE_SPEED = 65;
@@ -25,18 +21,41 @@ const ERASE_SPEED = 65;
     NgIf,
     ClockComponent,
     ThemeTogglerComponent,
+    BgDarkModeHeroComponent,
   ],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css',
 })
-export class HeroComponent implements AfterViewInit {
-  welcomeText: string = '';
-  qualityText: string = '';
+export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly mappingTag = [
     { id: 'blue', tag: 'text-blue-400' },
     { id: 'red', tag: 'text-red-500' },
     { id: 'green', tag: 'text-green-500' },
   ];
+
+  private themeChangeSubscription: Subscription | undefined;
+
+  welcomeText: string = '';
+  qualityText: string = '';
+
+  isDarkMode: boolean = false;
+
+  constructor(private readonly themeService: ThemeService) {}
+
+  ngOnInit(): void {
+    this.isDarkMode = this.themeService.isDarkThemePreferred();
+    this.themeChangeSubscription = this.themeService.isDarkMode.subscribe(
+      (isDarkMode) => {
+        this.isDarkMode = isDarkMode;
+      },
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.themeChangeSubscription) {
+      this.themeChangeSubscription.unsubscribe();
+    }
+  }
 
   async ngAfterViewInit(): Promise<void> {
     await setTimeoutAsync(undefined, 1500);
