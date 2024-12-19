@@ -5,24 +5,23 @@ import {
   ElementRef,
   HostListener,
   QueryList,
-  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { HeroComponent } from '../../components/hero/hero.component';
-import { TerminalComponent } from '../../components/info-box/terminal/terminal.component';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { RangePipe } from '../../pipe/range.pipe';
+import { ProjectsComponent } from '../../components/projects/projects.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     HeroComponent,
-    TerminalComponent,
     NgClass,
     NgForOf,
     RangePipe,
     NgIf,
+    ProjectsComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -30,9 +29,9 @@ import { RangePipe } from '../../pipe/range.pipe';
 export class HomeComponent implements AfterViewInit {
   @ViewChildren('section')
   sections!: QueryList<ElementRef<HTMLElement>>;
-  currentSectionIndex: number = 0;
+  currentSectionIndex: number = 1;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
     this.cdr.detectChanges();

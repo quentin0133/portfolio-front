@@ -7,7 +7,7 @@
          class="w-full h-full object-cover -z-10" src="assets/time/bg-light.jpg">
   </ng-template>
 </div>
-<div class="flex w-full h-[80%] px-4 2xl:px-42 xl:px-38 lg:px-28 md:px-12 sm:px-4 gap-6 justify-around items-center">
+<div id="hero-container" class="flex w-full h-[80%] px-4 2xl:px-42 xl:px-38 lg:px-28 md:px-12 sm:px-4 gap-6 justify-around items-center">
   <div
     class="min-h-60 flex flex-col sm:gap-4 gap-0 p-6 bg-white dark:bg-neutral-900 rounded-lg bg-opacity-75 dark:bg-opacity-75">
     <div id="status">
@@ -36,7 +36,7 @@
     </div>
   </div>
   <ng-container *ngIf="isDarkMode; else iconLightMode">
-    <img alt="Un trou noir aspirant des étoiles" src="assets/space/black-hole.png" />
+    <img id="black-hole" alt="Un trou noir aspirant des étoiles" src="assets/space/black-hole.png" />
   </ng-container>
   <ng-template #iconLightMode>
     <app-clock></app-clock>

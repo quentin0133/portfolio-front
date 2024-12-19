@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForOf, NgIf, NgStyle } from '@angular/common';
-import { TerminalComponent } from '../info-box/terminal/terminal.component';
 import { setTimeoutAsync } from '../../tools/js-native-utils';
 import { ClockComponent } from '../clock/clock.component';
 import { ThemeTogglerComponent } from '../theme-toggler/theme-toggler.component';
@@ -17,7 +16,6 @@ const ERASE_SPEED = 65;
   imports: [
     NgForOf,
     NgStyle,
-    TerminalComponent,
     NgIf,
     ClockComponent,
     ThemeTogglerComponent,
@@ -31,6 +29,20 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
     { id: 'blue', tag: 'text-blue-400' },
     { id: 'red', tag: 'text-red-500' },
     { id: 'green', tag: 'text-green-500' },
+  ];
+
+  isRunning: boolean = true;
+
+  texts: string[] = [
+    'Je suis un développeur <red>front</red>',
+    'Je suis un développeur <blue>back</blue>',
+    'Je suis un développeur <green>fullstack</green>',
+    'Je suis un développeur <red>créatif</red>',
+    'Je suis un développeur <blue>rigoureux</blue>',
+    'Je suis un développeur <green>passionné</green>',
+    'Je suis un développeur <red>leader</red>',
+    'Je suis un développeur <blue>curieux</blue>',
+    'Je suis un développeur <green>organisé</green>',
   ];
 
   private themeChangeSubscription: Subscription | undefined;
@@ -55,6 +67,7 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.themeChangeSubscription) {
       this.themeChangeSubscription.unsubscribe();
     }
+    this.isRunning = false;
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -65,57 +78,13 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
       (newText: string) => (this.welcomeText = newText),
     );
     await setTimeoutAsync(undefined, 500);
-    while (true) {
+    this.loopWhoAmI();
+  }
+
+  async loopWhoAmI(): Promise<void> {
+    for (let i = 0; this.isRunning; i = (i + 1) % this.texts.length) {
       await this.writeText(
-        'Je suis un développeur <red>front</red>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <blue>back</blue>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <green>fullstack</green>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <red>créatif</red>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <blue>rigoureux</blue>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <green>passionné</green>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <red>leader</red>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <blue>curieux</blue>',
-        () => this.qualityText,
-        (newText: string) => (this.qualityText = newText),
-      );
-      await setTimeoutAsync(undefined, 1000);
-      await this.writeText(
-        'Je suis un développeur <green>organisé</green>',
+        this.texts[i],
         () => this.qualityText,
         (newText: string) => (this.qualityText = newText),
       );

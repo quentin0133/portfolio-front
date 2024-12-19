@@ -1,9 +1,8 @@
-import { ElementRef, Injectable, OnDestroy } from '@angular/core';
+import { ElementRef, Injectable, NgZone } from '@angular/core';
 import * as THREE from 'three';
-import { fromEvent, Subject, takeUntil } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-export class BgDarkModeHeroService implements OnDestroy {
+export class BgDarkModeHeroService {
   private canvas: HTMLCanvasElement | undefined;
   private renderer: THREE.WebGLRenderer | undefined;
   private scene: THREE.Scene = new THREE.Scene();
@@ -12,15 +11,53 @@ export class BgDarkModeHeroService implements OnDestroy {
   private planeWidth: number | undefined;
   private planeHeight: number | undefined;
 
-  private resizeEvent = new Subject<void>();
+  private frameId: number | null = null;
 
-  ngOnDestroy(): void {
-    this.resizeEvent.next();
-    this.resizeEvent.complete();
+  public constructor(private ngZone: NgZone) {}
+
+  public cleanUp(): void {
+    if (this.frameId != null) {
+      cancelAnimationFrame(this.frameId);
+    }
+
+    if (this.renderer?.domElement.parentNode) {
+      this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+    }
+
+    if (this.plane) {
+      if (this.plane.geometry) {
+        this.plane.geometry.dispose();
+      }
+      if (this.plane.material) {
+        (this.plane.material as THREE.Material).dispose();
+      }
+    }
+
+    if (this.scene) {
+      this.scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          if (object.geometry) object.geometry.dispose();
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach((material) => material.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        }
+      });
+
+      this.scene.clear();
+    }
 
     if (this.renderer) {
       this.renderer.dispose();
+      this.renderer = undefined;
     }
+
+    this.canvas = undefined;
+    this.camera = undefined;
+    this.plane = undefined;
   }
 
   private onWindowResize(): void {
@@ -39,6 +76,11 @@ export class BgDarkModeHeroService implements OnDestroy {
 
     // Mets à jour la taille du plane
     this.updatePlaneSize();
+
+    if (this.plane) {
+      const material = this.plane.material as THREE.ShaderMaterial;
+      material.uniforms['uDisplacement'].value = this.getBlackHolePos();
+    }
   }
 
   initThreeJS(canvas: ElementRef<HTMLCanvasElement>): void {
@@ -47,10 +89,6 @@ export class BgDarkModeHeroService implements OnDestroy {
     // Initialisation scène, caméra et rendu
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xffffff);
-
-    fromEvent(window, 'resize')
-      .pipe(takeUntil(this.resizeEvent)) // Nettoyage à la destruction
-      .subscribe(() => this.onWindowResize());
 
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -66,26 +104,37 @@ export class BgDarkModeHeroService implements OnDestroy {
 
     // Charger la texture
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load('assets/space/bg-darkmode.png', (texture) =>
-      this.createPlane(texture),
+    textureLoader.load(
+      'assets/space/bg-darkmode.png',
+      (texture) => this.createPlane(texture),
+      undefined, // optional: onProgress
+      (err) => console.error('Texture loading failed:', err),
     );
-
-    // Lancer l'animation
-    this.animate();
   }
 
-  private animate(): void {
-    if (!this.renderer || !this.camera) return;
+  private getBlackHolePos(): THREE.Vector2 {
+    const containerElement = document.getElementById('hero-container');
+    const imageElement = document.getElementById('black-hole');
 
-    const time = performance.now() * 0.001;
+    if (!this.canvas || !containerElement || !imageElement)
+      return new THREE.Vector2(0, 0);
 
-    if (this.plane) {
-      const material = this.plane.material as THREE.ShaderMaterial;
-      material.uniforms['uTime'].value = time;
-    }
+    const containerRect = containerElement.getBoundingClientRect();
+    const imageRect = imageElement.getBoundingClientRect();
 
-    this.renderer.render(this.scene, this.camera);
-    requestAnimationFrame(() => this.animate());
+    // Récupérer les tailles du canvas
+    const canvasWidth = this.canvas.offsetWidth;
+    const canvasHeight = this.canvas.offsetHeight;
+
+    // Calculer la position de l'image par rapport au conteneur
+    const relativeX = imageRect.left - containerRect.left + imageRect.width / 2; // Centrer l'image
+    const relativeY = imageRect.top - containerRect.top + imageRect.height / 2; // Centrer l'image
+
+    // Normaliser les coordonnées en fonction de la taille du canvas
+    return new THREE.Vector2(
+      relativeX / canvasWidth, // Normaliser X de 0 à 1
+      relativeY / canvasHeight, // Normaliser Y de 0 à 1
+    );
   }
 
   private createPlane(texture: THREE.Texture) {
@@ -95,6 +144,7 @@ export class BgDarkModeHeroService implements OnDestroy {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
+        uDisplacement: { value: this.getBlackHolePos() },
         uTexture: { value: texture },
       },
       vertexShader: this.vertexShader(),
@@ -109,10 +159,16 @@ export class BgDarkModeHeroService implements OnDestroy {
   private updatePlaneSize(texture: any = undefined): void {
     if (!this.camera || !this.canvas) return;
 
-    if (this.plane && !texture) {
-      texture = (this.plane.material as THREE.ShaderMaterial).uniforms[
-        'uTexture'
-      ].value;
+    if (this.plane) {
+      if (!texture) {
+        texture = (this.plane.material as THREE.ShaderMaterial).uniforms[
+          'uTexture'
+        ].value;
+      }
+
+      (this.plane.material as THREE.ShaderMaterial).uniforms[
+        'uDisplacement'
+      ].value = new THREE.Vector2(0, 0);
     }
 
     const textureWidth = texture.image.width;
@@ -147,9 +203,44 @@ export class BgDarkModeHeroService implements OnDestroy {
     }
   }
 
+  public animate(): void {
+    // We have to run this outside angular zones,
+    // because it could trigger heavy changeDetection cycles.
+    this.ngZone.runOutsideAngular(() => {
+      if (document.readyState !== 'loading') {
+        this.render();
+      } else {
+        window.addEventListener('DOMContentLoaded', () => {
+          this.render();
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        this.onWindowResize();
+      });
+    });
+  }
+
+  public render(): void {
+    if (!this.renderer || !this.camera) return;
+
+    this.frameId = requestAnimationFrame(() => {
+      this.render();
+    });
+
+    if (this.plane) {
+      const time = performance.now() * 0.001;
+      const material = this.plane.material as THREE.ShaderMaterial;
+      material.uniforms['uTime'].value = time;
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
   private vertexShader(): string {
     return `
     varying vec2 vUv;
+    uniform vec2 uDisplacement;
     uniform sampler2D uTexture;
     uniform float uTime;
     uniform vec2 uResolution;
@@ -168,6 +259,7 @@ export class BgDarkModeHeroService implements OnDestroy {
     return `
       uniform sampler2D uTexture;
       uniform float uTime;
+      uniform vec2 uDisplacement;
       uniform vec2 uResolution;
       varying vec2 vUv;
 
@@ -201,7 +293,7 @@ export class BgDarkModeHeroService implements OnDestroy {
       void main() {
           vec2 uv = vUv;
 
-          vec2 centeredUv = vUv - vec2(0.72, 0.49);
+          vec2 centeredUv = vUv - uDisplacement;
 
           float dist = length(centeredUv);
           float angle = atan(centeredUv.y, centeredUv.x) + dist * 3.0;
