@@ -41,7 +41,7 @@ Par ailleurs, j'ai eu l'occasion d'approfondir des pratiques en tests et sécuri
 
 ## Contact
 
-Vous pouvez me contacter à quentin.yahia.pro [at] gmail [dot] com :
+Vous pouvez me contacter à quentin.yahia.pro@gmail.com :
 
 - [LinkedIn](https://www.linkedin.com/in/quentin-yahia/)
 - [GitHub](https://github.com/quentin0133)
