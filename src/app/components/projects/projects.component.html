@@ -1,15 +1,128 @@
-<div class="flex p-4">
-  <a class="flex flex-col group bg-white border shadow-sm rounded-xl overflow-hidden hover:shadow-lg focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70" href="#">
-    <div class="relative pt-[50%] sm:pt-[60%] lg:pt-[80%] rounded-t-xl overflow-hidden">
-      <img class="size-full absolute top-0 start-0 object-cover group-hover:scale-105 group-focus:scale-105 transition-transform duration-500 ease-in-out rounded-t-xl" src="https://images.unsplash.com/photo-1680868543815-b8666dba60f7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&q=80" alt="Card Image">
+<div
+  *ngIf="projectsObservable | loadingState | async as projectsState"
+  class="flex flex-col h-full justify-between"
+>
+  <app-slider
+    [state]="projectsState"
+    [datas]="isSuccess(projectsState) ? projectsState.data : []"
+    [cardTemplate]="cardTemplate"
+    (loadObservable)="reload()"
+    [activeIndex]="projectCurrentIndex"
+    (activeIndexChange)="setActiveIndex($event)"
+    class="h-2/3"
+  >
+    <ng-template #cardTemplate let-item let-i="index">
+      <h3>{{ item.title }}</h3>
+    </ng-template>
+  </app-slider>
+  <div
+    *ngIf="isLoading(projectsState)"
+    class="flex flex-col h-1/4"
+  >
+    <div class="dark:border-neutral-700 relative z-10">
+      <div class="flex gap-x-2">
+        <div class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200">
+          Résumé du projet
+        </div>
+        <div class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200">
+          Réalisations
+        </div>
+      </div>
     </div>
-    <div class="p-4 md:p-5">
-      <h3 class="text-lg font-bold text-gray-800 dark:text-white">
-        Card title
-      </h3>
-      <p class="mt-1 text-gray-500 dark:text-neutral-400">
-        Some quick example text to build on the card title and make up the bulk of the card's content.
-      </p>
+
+    <div class="animate-pulse h-full p-3 relative flex flex-col gap-y-4 justify-center border border-gray-200 dark:border-neutral-700 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800">
+      <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
+      <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
+      <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
+      <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
     </div>
-  </a>
+  </div>
+  <div
+    *ngIf="isSuccess(projectsState) && projectsState.data as projects"
+    class="flex flex-col h-1/4"
+  >
+    <ng-container *ngIf="projects.length > 0">
+      <div class="dark:border-neutral-700 relative z-10">
+        <nav class="flex gap-x-2" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+          <button
+            type="button"
+            class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+            id="card-type-tab-item-1"
+            [attr.aria-selected]="tabIndexTemp === 0"
+            data-hs-tab="#card-type-tab-1"
+            aria-controls="card-type-tab-1"
+            role="tab"
+            [ngClass]="{'bg-white border-b-transparent text-blue-600 dark:bg-neutral-800 dark:border-b-gray-800 dark:text-white': tabIndexTemp === 0}"
+            (click)="selectTab(0)"
+          >
+            Résumé du projet
+          </button>
+          <button
+            type="button"
+            class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+            id="card-type-tab-item-2"
+            [attr.aria-selected]="tabIndexTemp === 1"
+            data-hs-tab="#card-type-tab-2"
+            aria-controls="card-type-tab-2"
+            role="tab"
+            [ngClass]="{'bg-white border-b-transparent text-blue-600  dark:bg-neutral-800 dark:border-b-gray-800 dark:text-white': tabIndexTemp === 1}"
+            (click)="selectTab(1)"
+          >
+            Réalisations
+          </button>
+        </nav>
+      </div>
+
+      <div class="h-full p-3 relative overflow-y-auto overflow-x-hidden border border-gray-200 dark:border-neutral-700 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800 [&::-webkit-scrollbar]:w-2
+                  [&::-webkit-scrollbar-track]:rounded-lg
+                  [&::-webkit-scrollbar-track]:bg-gray-100
+                  [&::-webkit-scrollbar-thumb]:rounded-lg
+                  [&::-webkit-scrollbar-thumb]:bg-gray-300
+                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+      >
+        <div
+          id="card-type-tab-1"
+          role="tabpanel"
+          aria-labelledby="card-type-tab-item-1"
+          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white"
+          *ngIf="tabIndex === 0"
+          [@fadeInOut]="textAnimationState"
+          (@fadeInOut.done)="onAnimationDone($event)"
+        >
+          <p>
+            {{ projects[projectCurrentIndex].summary }}
+          </p>
+        </div>
+        <div
+          id="card-type-tab-2"
+          role="tabpanel"
+          aria-labelledby="card-type-tab-item-2"
+          *ngIf="tabIndex === 1"
+          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white"
+          [@fadeInOut]="textAnimationState"
+          (@fadeInOut.done)="onAnimationDone($event)"
+        >
+          <ul
+            class="list-disc list-inside marker:text-black dark:marker:text-white"
+          >
+            <li *ngFor="let feature of projects[projectCurrentIndex].features">
+              {{ feature }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="projects.length === 0">
+      <div
+        class="p-3 relative border border-gray-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 overflow-y-auto"
+        [@fadeInOut]
+      >
+        <p
+          class="animate-fade-in bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent">
+          L'absence n'est qu'une promesse silencieuse de ce qui est à venir.
+        </p>
+      </div>
+    </ng-container>
+  </div>
 </div>

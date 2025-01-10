@@ -10,7 +10,7 @@ import {
 import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { NgClass } from '@angular/common';
-import { ThemeService } from './services/theme.service';
+import { ThemeService } from './services/theme/theme.service';
 
 @Component({
   selector: 'app-root',

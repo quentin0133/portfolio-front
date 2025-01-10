@@ -22,11 +22,9 @@ export class BgDarkModeHeroComponent implements AfterViewInit, OnDestroy {
         const isVisible = entries[0].isIntersecting;
 
         if (isVisible) {
-          console.log('Composant visible');
           this.bgDarkModeHeroService.initThreeJS(this.elementRef);
           this.bgDarkModeHeroService.animate();
         } else {
-          console.log('Composant caché');
           this.bgDarkModeHeroService.cleanUp();
         }
       },

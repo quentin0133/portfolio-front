@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
-import { RangePipe } from '../../pipe/range.pipe';
+import { RangePipe } from '../../pipe/range/range.pipe';
 import { ProjectsComponent } from '../../components/projects/projects.component';
 
 @Component({
@@ -31,15 +31,20 @@ export class HomeComponent implements AfterViewInit {
   sections!: QueryList<ElementRef<HTMLElement>>;
   currentSectionIndex: number = 1;
 
+  private scrollTimeout: any = null;
+
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
     this.cdr.detectChanges();
+    this.sections.get(this.currentSectionIndex)?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+    });
   }
 
   @HostListener('wheel', ['$event'])
   onScroll(event: WheelEvent) {
-    if (event.ctrlKey || !this.sections?.length) {
+    if (event.ctrlKey || !this.sections?.length || this.scrollTimeout || this.isScrollableElement(event.target as HTMLElement)) {
       return;
     }
 
@@ -54,6 +59,25 @@ export class HomeComponent implements AfterViewInit {
     } else if (event.deltaY < 0 && currentSectionIndex > 0) {
       this.goToPreviousSection();
     }
+
+    this.scrollTimeout = setTimeout(() => {
+      this.scrollTimeout = null;
+    }, 200);
+  }
+
+  private isScrollableElement(element: HTMLElement): boolean {
+    let currentElement: HTMLElement | null = element;
+    const currentSection = this.sections.get(this.currentSectionIndex);
+
+    if (!currentSection) return true;
+
+    while (currentSection.nativeElement.contains(currentElement) && currentElement) {
+      if (currentElement.scrollHeight > currentElement.clientHeight)
+        return true;
+      currentElement = currentElement.parentElement;
+    }
+
+    return false;
   }
 
   goToNextSection() {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgStyle } from '@angular/common';
+import {NgOptimizedImage, NgStyle} from '@angular/common';
 import {
   animate,
   keyframes,
@@ -11,7 +11,7 @@ import {
 @Component({
   selector: 'app-clock',
   standalone: true,
-  imports: [NgStyle],
+  imports: [NgStyle, NgOptimizedImage],
   templateUrl: './clock.component.html',
   styleUrl: './clock.component.css',
   animations: [
