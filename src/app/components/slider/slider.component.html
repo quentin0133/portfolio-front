@@ -1,35 +1,41 @@
 <div class="relative w-full h-full mx-auto">
   <ng-container *ngIf="isSuccessState(state)">
     <div class="h-full overflow-hidden relative">
-      <div class="h-full flex items-center gap-x-4 transition-transform duration-500 ease-in-out"
-           [ngStyle]="{ transform: 'translateX(calc(' + (activeIndex * -50) + '% + 25% + ' + (activeIndex * -16) + 'px))' }">
+      <div
+        #sliderContainer
+        [style.transform]="'translateX(' + currentSlidePositionX + 'px)'"
+        class="h-full flex items-center gap-x-4 transition-transform duration-500 ease-in-out">
         <div
-          *ngFor="let data of datas; let i = index"
-          class="flex-shrink-0 w-1/2 h-full bg-white dark:bg-neutral-700 rounded-lg transition-all duration-700 ease-in-out flex items-center justify-center"
+          #sliderItem
+          (elementReady)="updateCurrentSliderPositionX()"
+          *ngFor="let data of state.data; let i = index"
           [ngClass]="{'scale-100 sm:scale-75': activeIndex !== i, '-z-10': activeIndex !== i}"
+          class="flex-shrink-0 lg:w-1/2 md:w-2/3 w-3/4 h-full bg-white dark:bg-neutral-700 rounded-lg transition-all duration-700 ease-in-out flex items-center justify-center"
         >
           <ng-container *ngTemplateOutlet="cardTemplate; context: { $implicit: data, index: i }"></ng-container>
         </div>
       </div>
     </div>
-    <button type="button" (click)="handlePrev()"
-            [disabled]="0 === activeIndex"
-            class="hs-carousel-prev disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 focus:outline-none rounded-s-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10">
-        <span class="text-2xl" aria-hidden="true">
-          <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <button (click)="handlePrev()" [disabled]="0 === activeIndex"
+            class="hs-carousel-prev disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 rounded-s-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
+            type="button">
+        <span aria-hidden="true" class="text-2xl">
+          <svg class="shrink-0 size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
+               xmlns="http://www.w3.org/2000/svg">
             <path d="m15 18-6-6 6-6"></path>
           </svg>
         </span>
       <span class="sr-only">Précédent</span>
     </button>
-    <button type="button" (click)="handleNext()"
-            [disabled]="datas.length - 1 === activeIndex"
-            class="hs-carousel-next disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 focus:outline-none rounded-e-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10">
+    <button (click)="handleNext()" [disabled]="state.data.length - 1 === activeIndex"
+            class="hs-carousel-next disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 rounded-e-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
+            type="button">
       <span class="sr-only">Suivant</span>
-      <span class="text-2xl" aria-hidden="true">
-          <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <span aria-hidden="true" class="text-2xl">
+          <svg class="shrink-0 size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
+               xmlns="http://www.w3.org/2000/svg">
             <path d="m9 18 6-6-6-6"></path>
           </svg>
         </span>
@@ -37,21 +43,24 @@
   </ng-container>
   <ng-container *ngIf="!isSuccessState(state)">
     <div class="h-full overflow-hidden relative">
-      <div class="h-full flex items-center gap-x-4"
-           [ngStyle]="{ transform: 'translateX(calc(' + (SIMULATE_ACTIVE_CARD * -50) + '% + 25% + ' + (SIMULATE_ACTIVE_CARD * -16) + 'px))' }">
+      <div
+        [ngStyle]="{ transform: 'translateX(calc(' + (SIMULATE_ACTIVE_CARD * -50) + '% + 25% + ' + (SIMULATE_ACTIVE_CARD * -16) + 'px))' }"
+        class="h-full flex items-center gap-x-4">
         <div
           *ngFor="let i of SIMULATE_NUMBER_CARD | range"
-          class="w-1/2 h-full rounded-lg flex items-center justify-center"
           [ngClass]="{'scale-100 sm:scale-75': SIMULATE_ACTIVE_CARD  !== i}"
+          class="w-1/2 h-full rounded-lg flex items-center justify-center"
         >
           <ng-container *ngIf="isLoadingState(state)">
-            <div class="w-full h-full bg-gradient-to-br from-gray-100 from-[47%] via-white to-gray-100 to-[53%] animate-skeleton-reflection dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800"></div>
+            <div
+              class="w-full h-full bg-gradient-to-br from-gray-100 from-[47%] via-white to-gray-100 to-[53%] animate-skeleton-reflection dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800"></div>
           </ng-container>
           <ng-container *ngIf="isErrorState(state)">
-            <div class="flex flex-col justify-center gap-y-4 items-center w-full h-full text-white bg-red-600 dark:bg-red-700 rounded-lg">
+            <div
+              class="flex flex-col justify-center gap-y-4 items-center w-full h-full text-white bg-red-600 dark:bg-red-700 rounded-lg">
               <ng-container *ngIf="i === SIMULATE_ACTIVE_CARD">
                 <div class="flex flex-col justify-center gap-x-2 text-center">
-                  <h3 id="hs-with-list-label" class="text-md font-semibold">
+                  <h3 class="text-md font-semibold" id="hs-with-list-label">
                     Erreur de connexion
                   </h3>
                   <div class="mt-2 text-sm">
@@ -59,14 +68,18 @@
                   </div>
                 </div>
                 <div>
-                  <div class="animate-ping absolute flex shrink-0 justify-center items-center gap-2 size-[36px] font-medium rounded-lg border border-transparent bg-red-500 dark:bg-red-800/30">
+                  <div
+                    class="animate-ping absolute flex shrink-0 justify-center items-center gap-2 size-[36px] font-medium rounded-lg border border-transparent bg-red-500 dark:bg-red-800/30">
                   </div>
-                  <button (click)="reload($event)" type="button"
-                          class="flex shrink-0 justify-center items-center gap-2 size-[36px] font-medium rounded-lg border border-transparent disabled:opacity-50 disabled:pointer-events-none bg-red-500 dark:bg-red-800 hover:bg-red-400 dark:hover:bg-red-900">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                  <button (click)="reload($event)"
+                          class="flex shrink-0 justify-center items-center gap-2 size-[36px] font-medium rounded-lg border border-transparent disabled:opacity-50 disabled:pointer-events-none bg-red-500 dark:bg-red-800 hover:bg-red-400 dark:hover:bg-red-900"
+                          type="button">
+                    <svg class="size-5" fill="none" stroke="currentColor" stroke-width="1.5"
+                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
                     </svg>
                   </button>
                 </div>
@@ -76,22 +89,26 @@
         </div>
       </div>
     </div>
-    <button type="button" [disabled]="true"
-            class="hs-carousel-prev disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 focus:outline-none rounded-s-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10">
-        <span class="text-2xl" aria-hidden="true">
-          <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <button [disabled]="true"
+            class="hs-carousel-prev disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 rounded-s-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
+            type="button">
+        <span aria-hidden="true" class="text-2xl">
+          <svg class="shrink-0 size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
+               xmlns="http://www.w3.org/2000/svg">
             <path d="m15 18-6-6 6-6"></path>
           </svg>
         </span>
       <span class="sr-only">Précédent</span>
     </button>
-    <button type="button" [disabled]="true"
-            class="hs-carousel-next disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 focus:outline-none rounded-e-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10">
+    <button [disabled]="true"
+            class="hs-carousel-next disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-gray-800/5 hover:bg-gray-800/10 rounded-e-lg dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
+            type="button">
       <span class="sr-only">Suivant</span>
-      <span class="text-2xl" aria-hidden="true">
-          <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <span aria-hidden="true" class="text-2xl">
+          <svg class="shrink-0 size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
+               xmlns="http://www.w3.org/2000/svg">
             <path d="m9 18 6-6-6-6"></path>
           </svg>
         </span>

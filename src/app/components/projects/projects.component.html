@@ -3,34 +3,36 @@
   class="flex flex-col h-full justify-between"
 >
   <app-slider
-    [state]="projectsState"
-    [datas]="isSuccess(projectsState) ? projectsState.data : []"
-    [cardTemplate]="cardTemplate"
-    (loadObservable)="reload()"
-    [activeIndex]="projectCurrentIndex"
     (activeIndexChange)="setActiveIndex($event)"
-    class="h-2/3"
+    (loadObservable)="reload()"
+    [activeIndex]="projectCurrentIndexTemp"
+    [cardTemplate]="cardTemplate"
+    [state]="projectsState"
+    class="h-[60%]"
   >
-    <ng-template #cardTemplate let-item let-i="index">
+    <ng-template #cardTemplate let-i="index" let-item>
       <h3>{{ item.title }}</h3>
     </ng-template>
   </app-slider>
   <div
     *ngIf="isLoading(projectsState)"
-    class="flex flex-col h-1/4"
+    class="flex flex-col h-[35%]"
   >
     <div class="dark:border-neutral-700 relative z-10">
       <div class="flex gap-x-2">
-        <div class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200">
+        <div
+          class="-mb-px py-3 select-none px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center text-gray-500 rounded-t-lg pointer-events-none dark:bg-neutral-700 dark:text-neutral-400">
           Résumé du projet
         </div>
-        <div class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200">
+        <div
+          class="-mb-px py-3 select-none px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center text-gray-500 rounded-t-lg disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:text-neutral-400">
           Réalisations
         </div>
       </div>
     </div>
 
-    <div class="animate-pulse h-full p-3 relative flex flex-col gap-y-4 justify-center border border-gray-200 dark:border-neutral-700 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800">
+    <div
+      class="animate-pulse h-full p-3 relative flex flex-col gap-y-4 justify-center border border-gray-200 dark:border-neutral-700 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800">
       <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
       <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
       <p class="h-4 bg-gray-200 rounded-full dark:bg-neutral-700"></p>
@@ -39,69 +41,70 @@
   </div>
   <div
     *ngIf="isSuccess(projectsState) && projectsState.data as projects"
-    class="flex flex-col h-1/4"
+    class="flex flex-col h-[35%]"
   >
     <ng-container *ngIf="projects.length > 0">
-      <div class="dark:border-neutral-700 relative z-10">
-        <nav class="flex gap-x-2" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+      <div class="relative z-10">
+        <nav aria-label="Tabs" aria-orientation="horizontal" class="flex gap-x-2" role="tablist">
           <button
-            type="button"
-            class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
-            id="card-type-tab-item-1"
-            [attr.aria-selected]="tabIndexTemp === 0"
-            data-hs-tab="#card-type-tab-1"
-            aria-controls="card-type-tab-1"
-            role="tab"
-            [ngClass]="{'bg-white border-b-transparent text-blue-600 dark:bg-neutral-800 dark:border-b-gray-800 dark:text-white': tabIndexTemp === 0}"
             (click)="selectTab(0)"
+            [attr.aria-selected]="tabIndexTemp === 0"
+            [ngClass]="{'bg-white text-blue-600 dark:bg-neutral-800 dark:text-white': tabIndexTemp === 0}"
+            aria-controls="card-type-tab-1"
+            class="-mb-px py-3 px-4 inline-flex transition-colors duration-300 items-center gap-x-2 bg-gray-100 text-sm font-medium text-center text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+            data-hs-tab="#card-type-tab-1"
+            id="card-type-tab-item-1"
+            role="tab"
+            type="button"
           >
             Résumé du projet
           </button>
           <button
-            type="button"
-            class="-mb-px py-3 px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center border text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
-            id="card-type-tab-item-2"
-            [attr.aria-selected]="tabIndexTemp === 1"
-            data-hs-tab="#card-type-tab-2"
-            aria-controls="card-type-tab-2"
-            role="tab"
-            [ngClass]="{'bg-white border-b-transparent text-blue-600  dark:bg-neutral-800 dark:border-b-gray-800 dark:text-white': tabIndexTemp === 1}"
             (click)="selectTab(1)"
+            [attr.aria-selected]="tabIndexTemp === 1"
+            [ngClass]="{'bg-white text-blue-600  dark:bg-neutral-800 dark:text-white': tabIndexTemp === 1}"
+            aria-controls="card-type-tab-2"
+            class="-mb-px py-3 px-4 inline-flex transition-colors duration-300 items-center gap-x-2 bg-gray-100 text-sm font-medium text-center text-gray-500 rounded-t-lg hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+            data-hs-tab="#card-type-tab-2"
+            id="card-type-tab-item-2"
+            role="tab"
+            type="button"
           >
             Réalisations
           </button>
         </nav>
       </div>
 
-      <div class="h-full p-3 relative overflow-y-auto overflow-x-hidden border border-gray-200 dark:border-neutral-700 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800 [&::-webkit-scrollbar]:w-2
+      <div class="h-auto ps-3 pe-2 relative overflow-y-auto overflow-x-hidden border-white dark:border-neutral-800 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800 [&::-webkit-scrollbar]:w-2
                   [&::-webkit-scrollbar-track]:rounded-lg
                   [&::-webkit-scrollbar-track]:bg-gray-100
                   [&::-webkit-scrollbar-thumb]:rounded-lg
                   [&::-webkit-scrollbar-thumb]:bg-gray-300
                   dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+                  border-x-8 border-y-[15px]"
       >
         <div
-          id="card-type-tab-1"
-          role="tabpanel"
-          aria-labelledby="card-type-tab-item-1"
-          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white"
+          (@fadeInOut.done)="onAnimationDone($event)"
           *ngIf="tabIndex === 0"
           [@fadeInOut]="textAnimationState"
-          (@fadeInOut.done)="onAnimationDone($event)"
+          aria-labelledby="card-type-tab-item-1"
+          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white lg:text-lg text-md"
+          id="card-type-tab-1"
+          role="tabpanel"
         >
           <p>
             {{ projects[projectCurrentIndex].summary }}
           </p>
         </div>
         <div
+          (@fadeInOut.done)="onAnimationDone($event)"
+          *ngIf="tabIndex === 1"
+          [@fadeInOut]="textAnimationState"
+          aria-labelledby="card-type-tab-item-2"
+          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white lg:text-lg text-md"
           id="card-type-tab-2"
           role="tabpanel"
-          aria-labelledby="card-type-tab-item-2"
-          *ngIf="tabIndex === 1"
-          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white"
-          [@fadeInOut]="textAnimationState"
-          (@fadeInOut.done)="onAnimationDone($event)"
         >
           <ul
             class="list-disc list-inside marker:text-black dark:marker:text-white"
@@ -114,12 +117,18 @@
       </div>
     </ng-container>
     <ng-container *ngIf="projects.length === 0">
-      <div
-        class="p-3 relative border border-gray-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 overflow-y-auto"
-        [@fadeInOut]
-      >
+      <div class="h-auto ps-3 pe-2 relative overflow-y-auto overflow-x-hidden border-white dark:border-neutral-800 rounded-b-lg rounded-e-lg bg-white dark:bg-neutral-800 [&::-webkit-scrollbar]:w-2
+                  [&::-webkit-scrollbar-track]:rounded-lg
+                  [&::-webkit-scrollbar-track]:bg-gray-100
+                  [&::-webkit-scrollbar-thumb]:rounded-lg
+                  [&::-webkit-scrollbar-thumb]:bg-gray-300
+                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+                  border-x-8 border-y-[15px]">
         <p
-          class="animate-fade-in bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent">
+          [@fadeInOut]="textAnimationState"
+          (@fadeInOut.done)="onAnimationDone($event)"
+          class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white lg:text-lg text-md">
           L'absence n'est qu'une promesse silencieuse de ce qui est à venir.
         </p>
       </div>

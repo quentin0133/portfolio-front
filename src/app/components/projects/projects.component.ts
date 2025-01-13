@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef} from '@angular/core';
 import {AsyncPipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
 import {isLoading, isSuccess, LoadingStatePipe} from "../../pipe/loading-state/loading-state.pipe";
 import {Observable} from "rxjs";
@@ -6,6 +6,7 @@ import {Project} from "../../models/project";
 import {ProjectService} from "../../services/project/project.service";
 import {SliderComponent} from "../slider/slider.component";
 import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-projects',
@@ -80,9 +81,10 @@ export class ProjectsComponent implements AfterViewInit {
 
   constructor(
     private projectService: ProjectService,
-    private readonly elementRef: ElementRef
+    private readonly elementRef: ElementRef,
+    private cdRef: ChangeDetectorRef,
   ) {
-    this.projectsObservable = projectService.findAll2();
+    this.projectsObservable = projectService.findAll();
   }
 
   ngAfterViewInit(): void {
@@ -103,7 +105,7 @@ export class ProjectsComponent implements AfterViewInit {
   }
 
   reload() {
-    this.projectsObservable = this.projectService.findAll2();
+    this.projectsObservable = this.projectService.findAll();
   }
 
   selectTab(newIndexTab: number) {
@@ -128,6 +130,7 @@ export class ProjectsComponent implements AfterViewInit {
         this.setTextAnimation('in');
       }, 10)
     }
+    this.cdRef.detectChanges();
   }
 
   protected readonly isSuccess = isSuccess;

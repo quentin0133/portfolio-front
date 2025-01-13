@@ -88,7 +88,7 @@ export class BgDarkModeHeroService {
 
     // Initialisation scène, caméra et rendu
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xffffff);
+    this.scene.background = new THREE.Color(0x000000);
 
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -170,6 +170,8 @@ export class BgDarkModeHeroService {
         'uDisplacement'
       ].value = new THREE.Vector2(0, 0);
     }
+
+    if (!texture) return;
 
     const textureWidth = texture.image.width;
     const textureHeight = texture.image.height;

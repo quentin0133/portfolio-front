@@ -36,7 +36,7 @@
     </div>
   </div>
   <ng-container *ngIf="isDarkMode; else iconLightMode">
-    <img id="black-hole" priority alt="Un trou noir aspirant des étoiles" ngSrc="assets/space/black-hole.png" class="w-[28rem]" height="550" width="550" />
+    <img id="black-hole" priority alt="Un trou noir aspirant des étoiles" ngSrc="assets/space/black-hole.png" class="lg:w-[28rem] md:w-64 sm:w-64" height="550" width="550" />
   </ng-container>
   <ng-template #iconLightMode>
     <app-clock></app-clock>

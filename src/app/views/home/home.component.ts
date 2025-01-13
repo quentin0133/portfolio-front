@@ -27,11 +27,12 @@ import { ProjectsComponent } from '../../components/projects/projects.component'
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements AfterViewInit {
+  private scrollTimeout: any = null;
+  private touchStartY: number = 0;
+
   @ViewChildren('section')
   sections!: QueryList<ElementRef<HTMLElement>>;
   currentSectionIndex: number = 1;
-
-  private scrollTimeout: any = null;
 
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
@@ -50,19 +51,53 @@ export class HomeComponent implements AfterViewInit {
 
     event.preventDefault();
 
-    const currentSectionIndex = Array.from(this.sections).findIndex(
-      (section) => section.nativeElement.getBoundingClientRect().top >= 0,
-    );
-
-    if (event.deltaY > 0 && currentSectionIndex < this.sections.length - 1) {
+    if (event.deltaY > 0 && this.currentSectionIndex < this.sections.length - 1) {
       this.goToNextSection();
-    } else if (event.deltaY < 0 && currentSectionIndex > 0) {
+    } else if (event.deltaY < 0 && this.currentSectionIndex > 0) {
       this.goToPreviousSection();
     }
 
     this.scrollTimeout = setTimeout(() => {
       this.scrollTimeout = null;
     }, 200);
+  }
+
+  @HostListener('touchstart', ['$event'])
+  onTouchStart(event: TouchEvent) {
+    // On enregistre la position de départ du touch
+    this.touchStartY = event.touches[0].clientY;
+  }
+
+  @HostListener('touchmove', ['$event'])
+  onTouchMove(event: TouchEvent) {
+    if (!this.sections?.length || this.scrollTimeout || this.isScrollableElement(event.target as HTMLElement)) {
+      return;
+    }
+
+    const touchMoveY = event.touches[0].clientY;
+    const deltaY = this.touchStartY - touchMoveY;
+
+    // Empêche le comportement par défaut de scroll
+    event.preventDefault();
+
+    const sensitivity = 15;
+
+    if (Math.abs(deltaY) > sensitivity) {
+      this.scrollTimeout = setTimeout(() => {
+        this.scrollTimeout = null;
+      }, 200);
+    }
+
+    if (deltaY > sensitivity && this.currentSectionIndex < this.sections.length - 1) {
+      // Scroll vers le bas, aller à la section suivante
+      this.goToNextSection();
+    } else if (deltaY < -sensitivity && this.currentSectionIndex > 0) {
+      // Scroll vers le haut, aller à la section précédente
+      this.goToPreviousSection();
+    }
+
+    // Mettez à jour la position de départ du touch pour la prochaine interaction
+    this.touchStartY = touchMoveY;
   }
 
   private isScrollableElement(element: HTMLElement): boolean {
