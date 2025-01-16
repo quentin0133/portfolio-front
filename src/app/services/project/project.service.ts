@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {catchError, delay, Observable, throwError} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { Project } from '../../models/project';
@@ -139,6 +139,12 @@ export class ProjectService {
   constructor(private http: HttpClient) {}
 
   findAll(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.ENDPOINT);
+    return this.http.get<Project[]>(this.ENDPOINT)
+      .pipe(
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => new Error('An error occurred in project service.'));
+        })
+      )
   }
 }

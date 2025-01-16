@@ -107,8 +107,12 @@ export class HomeComponent implements AfterViewInit {
     if (!currentSection) return true;
 
     while (currentSection.nativeElement.contains(currentElement) && currentElement) {
-      if (currentElement.scrollHeight > currentElement.clientHeight)
-        return true;
+      if (currentElement.scrollHeight > currentElement.clientHeight) {
+        const style = window.getComputedStyle(currentElement);
+        const overflowY = style.getPropertyValue('overflow-y');
+        if (overflowY === 'auto' || overflowY === 'scroll')
+          return true;
+      }
       currentElement = currentElement.parentElement;
     }
 

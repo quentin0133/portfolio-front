@@ -116,24 +116,34 @@ export class BgDarkModeHeroService {
     const containerElement = document.getElementById('hero-container');
     const imageElement = document.getElementById('black-hole');
 
-    if (!this.canvas || !containerElement || !imageElement)
+    if (!this.canvas || !this.camera || !this.planeWidth || !this.planeHeight || !containerElement || !imageElement)
       return new THREE.Vector2(0, 0);
 
     const containerRect = containerElement.getBoundingClientRect();
     const imageRect = imageElement.getBoundingClientRect();
 
-    // Récupérer les tailles du canvas
     const canvasWidth = this.canvas.offsetWidth;
     const canvasHeight = this.canvas.offsetHeight;
 
-    // Calculer la position de l'image par rapport au conteneur
-    const relativeX = imageRect.left - containerRect.left + imageRect.width / 2; // Centrer l'image
-    const relativeY = imageRect.top - containerRect.top + imageRect.height / 2; // Centrer l'image
+    const canvasAspect = canvasWidth / canvasHeight;
+    const textureAspect = this.planeWidth / this.planeHeight;
 
-    // Normaliser les coordonnées en fonction de la taille du canvas
+    let relativeX = imageRect.left - containerRect.left + imageRect.width / 2;
+    let relativeY =
+      window.innerHeight -
+      imageRect.top -
+      (window.innerHeight - containerRect.bottom) -
+      imageRect.height / 2;
+
+    if (canvasAspect <= textureAspect) {
+      const widthDiff = (canvasHeight * textureAspect) - canvasWidth;
+      const offsetFactor = (relativeX - canvasWidth / 2) / (2 * canvasWidth);
+      relativeX -= widthDiff * offsetFactor;
+    }
+
     return new THREE.Vector2(
-      relativeX / canvasWidth, // Normaliser X de 0 à 1
-      relativeY / canvasHeight, // Normaliser Y de 0 à 1
+      relativeX / canvasWidth,
+      relativeY / canvasHeight,
     );
   }
 
@@ -156,7 +166,9 @@ export class BgDarkModeHeroService {
     this.scene.add(this.plane);
   }
 
-  private updatePlaneSize(texture: any = undefined): void {
+  private updatePlaneSize(
+    texture: THREE.Texture | undefined = undefined,
+  ): void {
     if (!this.camera || !this.canvas) return;
 
     if (this.plane) {
@@ -176,19 +188,19 @@ export class BgDarkModeHeroService {
     const textureWidth = texture.image.width;
     const textureHeight = texture.image.height;
 
-    const width = this.canvas.offsetWidth;
-    const height = this.canvas.offsetHeight;
+    const canvasWidth = this.canvas.offsetWidth;
+    const canvasHeight = this.canvas.offsetHeight;
 
     const textureAspect = textureWidth / textureHeight;
-    const windowAspect = width / height;
+    const canvasAspect = canvasWidth / canvasHeight;
     const cameraZ = this.camera.position.z;
 
-    if (windowAspect > textureAspect) {
+    if (canvasAspect > textureAspect) {
       this.planeWidth =
         2 *
         Math.tan(((this.camera.fov / 2) * Math.PI) / 180) *
         cameraZ *
-        windowAspect;
+        canvasAspect;
       this.planeHeight = this.planeWidth / textureAspect;
     } else {
       this.planeHeight =

@@ -1,12 +1,35 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef} from '@angular/core';
-import {AsyncPipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
-import {isLoading, isSuccess, LoadingStatePipe} from "../../pipe/loading-state/loading-state.pipe";
-import {Observable} from "rxjs";
-import {Project} from "../../models/project";
-import {ProjectService} from "../../services/project/project.service";
-import {SliderComponent} from "../slider/slider.component";
-import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
-import {error} from "@angular/compiler-cli/src/transformers/util";
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+} from '@angular/core';
+import {
+  AsyncPipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common';
+import {
+  isLoading,
+  isSuccess,
+  LoadingStatePipe,
+} from '../../pipe/loading-state/loading-state.pipe';
+import {Observable, of} from 'rxjs';
+import { Project } from '../../models/project';
+import { ProjectService } from '../../services/project/project.service';
+import { SliderComponent } from '../slider/slider.component';
+import {
+  animate,
+  keyframes,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-projects',
@@ -20,7 +43,7 @@ import {error} from "@angular/compiler-cli/src/transformers/util";
     NgSwitchCase,
     NgSwitch,
     NgStyle,
-    SliderComponent
+    SliderComponent,
   ],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css',
@@ -28,11 +51,11 @@ import {error} from "@angular/compiler-cli/src/transformers/util";
     trigger('fadeInOut', [
       state(
         'in',
-        style({backgroundPosition: '0% 0%', backgroundSize: '300% 300%'})
+        style({ backgroundPosition: '0% 0%', backgroundSize: '300% 300%' }),
       ),
       state(
         'out',
-        style({backgroundPosition: '100% 0%', backgroundSize: '300% 300%'})
+        style({ backgroundPosition: '100% 0%', backgroundSize: '300% 300%' }),
       ),
       transition('out => in', [
         animate(
@@ -46,7 +69,7 @@ import {error} from "@angular/compiler-cli/src/transformers/util";
               backgroundPosition: '0% 0%',
               backgroundSize: '300% 300%',
             }),
-          ])
+          ]),
         ),
       ]),
       transition('in => out', [
@@ -61,14 +84,14 @@ import {error} from "@angular/compiler-cli/src/transformers/util";
               backgroundPosition: '100% 0%',
               backgroundSize: '300% 300%',
             }),
-          ])
+          ]),
         ),
       ]),
     ]),
   ],
 })
 export class ProjectsComponent implements AfterViewInit {
-  private observer: IntersectionObserver | undefined;
+  private visibleObserver: IntersectionObserver | undefined;
 
   textAnimationState = 'out';
 
@@ -84,11 +107,11 @@ export class ProjectsComponent implements AfterViewInit {
     private readonly elementRef: ElementRef,
     private cdRef: ChangeDetectorRef,
   ) {
-    this.projectsObservable = projectService.findAll();
+    this.projectsObservable = this.projectService.findAll();
   }
 
   ngAfterViewInit(): void {
-    this.observer = new IntersectionObserver(
+    this.visibleObserver = new IntersectionObserver(
       (entries) => {
         const isVisible = entries[0].isIntersecting;
 
@@ -98,10 +121,10 @@ export class ProjectsComponent implements AfterViewInit {
           this.setTextAnimation('out');
         }
       },
-      {threshold: 0.8}
+      { threshold: 0.8 },
     );
 
-    this.observer.observe(this.elementRef.nativeElement);
+    this.visibleObserver.observe(this.elementRef.nativeElement);
   }
 
   reload() {
@@ -109,7 +132,7 @@ export class ProjectsComponent implements AfterViewInit {
   }
 
   selectTab(newIndexTab: number) {
-    this.setTextAnimation('out')
+    this.setTextAnimation('out');
     this.tabIndexTemp = newIndexTab;
   }
 
@@ -128,7 +151,7 @@ export class ProjectsComponent implements AfterViewInit {
     if (event.toState === 'out') {
       setTimeout(() => {
         this.setTextAnimation('in');
-      }, 10)
+      }, 10);
     }
     this.cdRef.detectChanges();
   }

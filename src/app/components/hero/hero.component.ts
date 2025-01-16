@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage, NgStyle} from '@angular/common';
 import { setTimeoutAsync } from '../../tools/js-native-utils';
 import { ClockComponent } from '../clock/clock.component';
@@ -24,6 +24,7 @@ const ERASE_SPEED = 65;
   ],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css',
+  encapsulation: ViewEncapsulation.Emulated
 })
 export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly mappingTag = [
@@ -35,15 +36,15 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
   isRunning: boolean = true;
 
   texts: string[] = [
-    'Je suis un développeur <red>front</red>',
-    'Je suis un développeur <blue>back</blue>',
-    'Je suis un développeur <green>fullstack</green>',
-    'Je suis un développeur <red>créatif</red>',
-    'Je suis un développeur <blue>rigoureux</blue>',
-    'Je suis un développeur <green>passionné</green>',
-    'Je suis un développeur <red>leader</red>',
-    'Je suis un développeur <blue>curieux</blue>',
-    'Je suis un développeur <green>organisé</green>',
+    'Un développeur <red>front</red>',
+    'Un développeur <blue>back</blue>',
+    'Un développeur <green>fullstack</green>',
+    'Un développeur <red>créatif</red>',
+    'Un développeur <blue>rigoureux</blue>',
+    'Un développeur <green>passionné</green>',
+    'Un développeur <red>leader</red>',
+    'Un développeur <blue>curieux</blue>',
+    'Un développeur <green>organisé</green>',
   ];
 
   private themeChangeSubscription: Subscription | undefined;
@@ -74,7 +75,7 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngAfterViewInit(): Promise<void> {
     await setTimeoutAsync(undefined, 1500);
     await this.writeText(
-      'Bienvenue sur le portfolio de Quentin YAHIA',
+      'Hey ! Je suis Quentin',
       () => this.welcomeText,
       (newText: string) => (this.welcomeText = newText),
     );
