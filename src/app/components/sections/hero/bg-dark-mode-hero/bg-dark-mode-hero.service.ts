@@ -63,18 +63,14 @@ export class BgDarkModeHeroService {
   private onWindowResize(): void {
     if (!this.camera || !this.renderer || !this.canvas) return;
 
-    // Met à jour les dimensions du canvas
     const width = this.canvas.offsetWidth;
     const height = this.canvas.offsetHeight;
 
-    // Ajuste la caméra
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
 
-    // Ajuste le renderer
     this.renderer.setSize(width, height);
 
-    // Mets à jour la taille du plane
     this.updatePlaneSize();
 
     if (this.plane) {

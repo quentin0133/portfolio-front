@@ -4,7 +4,7 @@
   </ng-container>
   <ng-template #bgLightMode>
     <img alt="Un dessin montrant un paysage au dessus des nuages, il a un côté paradis"
-         class="w-full h-full object-cover -z-10" fill ngSrc="assets/time/bg-light.jpg" priority>
+         class="w-full h-full object-cover -z-10" fill ngSrc="../../../../assets/time/bg-light.jpg" priority>
   </ng-template>
 </div>
 <div class="flex sm:flex-row flex-col w-full h-[80%] px-4 2xl:px-42 xl:px-38 lg:px-28 md:px-12 sm:px-4 gap-6 sm:justify-around justify-center items-center"
@@ -37,10 +37,10 @@
     </div>
   </div>
   <ng-container *ngIf="isDarkMode; else iconLightMode">
-    <img alt="Un trou noir aspirant des étoiles" class="lg:w-[28rem] md:w-64 sm:w-64 sm:h-auto w-auto h-1/3" height="550" id="black-hole"
-         ngSrc="assets/space/black-hole.png" priority width="550"/>
+    <img alt="Un trou noir aspirant des étoiles" class="lg:w-[28rem] md:w-64 sm:w-64 sm:h-auto w-auto h-2/5" height="550" id="black-hole"
+         ngSrc="../../../../assets/space/black-hole.png" priority width="550"/>
   </ng-container>
   <ng-template #iconLightMode>
-    <app-clock class="sm:h-auto w-auto h-1/3" />
+    <app-clock class="lg:w-[28rem] md:w-64 sm:w-64 sm:h-auto w-auto h-1/2" />
   </ng-template>
 </div>

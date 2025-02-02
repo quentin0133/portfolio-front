@@ -7,10 +7,12 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { HeroComponent } from '../../components/hero/hero.component';
+import { HeroComponent } from '../../components/sections/hero/hero.component';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { RangePipe } from '../../pipe/range/range.pipe';
-import { ProjectsComponent } from '../../components/projects/projects.component';
+import { ProjectsComponent } from '../../components/sections/projects/projects.component';
+import {ContactComponent} from "../../components/sections/contact/contact.component";
+import {AboutMeComponent} from "../../components/about-me/about-me.component";
 
 @Component({
   selector: 'app-home',
@@ -22,6 +24,8 @@ import { ProjectsComponent } from '../../components/projects/projects.component'
     RangePipe,
     NgIf,
     ProjectsComponent,
+    ContactComponent,
+    AboutMeComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -32,7 +36,7 @@ export class HomeComponent implements AfterViewInit {
 
   @ViewChildren('section')
   sections!: QueryList<ElementRef<HTMLElement>>;
-  currentSectionIndex: number = 1;
+  currentSectionIndex: number = 0;
 
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
@@ -41,17 +45,43 @@ export class HomeComponent implements AfterViewInit {
     this.sections.get(this.currentSectionIndex)?.nativeElement.scrollIntoView({
       behavior: 'smooth',
     });
+
+    const navBar = document.getElementById('navbar');
+    if (!navBar) return;
+    const navHeight = navBar.offsetHeight;
+    const viewportHeight = window.innerHeight;
+
+    //console.log(viewportHeight - navHeight)
+
+    this.sections.forEach((section: ElementRef<HTMLElement>) => {
+      section.nativeElement.style.height = `${viewportHeight - navHeight}px`;
+    });
   }
 
   @HostListener('wheel', ['$event'])
   onScroll(event: WheelEvent) {
-    if (event.ctrlKey || !this.sections?.length || this.scrollTimeout || this.isScrollableElement(event.target as HTMLElement)) {
+    const currentZoom = window.devicePixelRatio;
+    //console.log(currentZoom)
+    if (
+      (event.ctrlKey && event.deltaY < 0) ||
+      currentZoom > 1 ||
+      !this.sections?.length ||
+      this.scrollTimeout ||
+      this.isScrollableElement(event.target as HTMLElement)
+    ) {
       return;
     }
 
     event.preventDefault();
 
-    if (event.deltaY > 0 && this.currentSectionIndex < this.sections.length - 1) {
+    if (event.ctrlKey) {
+      return;
+    }
+
+    if (
+      event.deltaY > 0 &&
+      this.currentSectionIndex < this.sections.length - 1
+    ) {
       this.goToNextSection();
     } else if (event.deltaY < 0 && this.currentSectionIndex > 0) {
       this.goToPreviousSection();
@@ -64,20 +94,22 @@ export class HomeComponent implements AfterViewInit {
 
   @HostListener('touchstart', ['$event'])
   onTouchStart(event: TouchEvent) {
-    // On enregistre la position de départ du touch
     this.touchStartY = event.touches[0].clientY;
   }
 
   @HostListener('touchmove', ['$event'])
   onTouchMove(event: TouchEvent) {
-    if (!this.sections?.length || this.scrollTimeout || this.isScrollableElement(event.target as HTMLElement)) {
+    if (
+      !this.sections?.length ||
+      this.scrollTimeout ||
+      this.isScrollableElement(event.target as HTMLElement)
+    ) {
       return;
     }
 
     const touchMoveY = event.touches[0].clientY;
     const deltaY = this.touchStartY - touchMoveY;
 
-    // Empêche le comportement par défaut de scroll
     event.preventDefault();
 
     const sensitivity = 15;
@@ -88,7 +120,10 @@ export class HomeComponent implements AfterViewInit {
       }, 200);
     }
 
-    if (deltaY > sensitivity && this.currentSectionIndex < this.sections.length - 1) {
+    if (
+      deltaY > sensitivity &&
+      this.currentSectionIndex < this.sections.length - 1
+    ) {
       // Scroll vers le bas, aller à la section suivante
       this.goToNextSection();
     } else if (deltaY < -sensitivity && this.currentSectionIndex > 0) {
@@ -106,12 +141,14 @@ export class HomeComponent implements AfterViewInit {
 
     if (!currentSection) return true;
 
-    while (currentSection.nativeElement.contains(currentElement) && currentElement) {
+    while (
+      currentSection.nativeElement.contains(currentElement) &&
+      currentElement
+    ) {
       if (currentElement.scrollHeight > currentElement.clientHeight) {
         const style = window.getComputedStyle(currentElement);
         const overflowY = style.getPropertyValue('overflow-y');
-        if (overflowY === 'auto' || overflowY === 'scroll')
-          return true;
+        if (overflowY === 'auto' || overflowY === 'scroll') return true;
       }
       currentElement = currentElement.parentElement;
     }

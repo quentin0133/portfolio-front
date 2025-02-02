@@ -1,11 +1,11 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage, NgStyle} from '@angular/common';
-import { setTimeoutAsync } from '../../tools/js-native-utils';
-import { ClockComponent } from '../clock/clock.component';
-import { ThemeTogglerComponent } from '../theme-toggler/theme-toggler.component';
+import { setTimeoutAsync } from '../../../tools/js-native-utils';
+import { ClockComponent } from './clock/clock.component';
+import { ThemeTogglerComponent } from '../../theme-toggler/theme-toggler.component';
 import { Subscription } from 'rxjs';
-import { ThemeService } from '../../services/theme/theme.service';
-import { BgDarkModeHeroComponent } from '../bg-dark-mode-hero/bg-dark-mode-hero.component';
+import { ThemeService } from '../../../services/theme/theme.service';
+import { BgDarkModeHeroComponent } from './bg-dark-mode-hero/bg-dark-mode-hero.component';
 
 const WRITING_SPEED = 65;
 const ERASE_SPEED = 65;

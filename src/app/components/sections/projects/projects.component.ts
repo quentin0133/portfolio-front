@@ -9,6 +9,7 @@ import {
   NgClass,
   NgForOf,
   NgIf,
+  NgOptimizedImage,
   NgStyle,
   NgSwitch,
   NgSwitchCase,
@@ -17,11 +18,11 @@ import {
   isLoading,
   isSuccess,
   LoadingStatePipe,
-} from '../../pipe/loading-state/loading-state.pipe';
-import {Observable, of} from 'rxjs';
-import { Project } from '../../models/project';
-import { ProjectService } from '../../services/project/project.service';
-import { SliderComponent } from '../slider/slider.component';
+} from '../../../pipe/loading-state/loading-state.pipe';
+import { Observable } from 'rxjs';
+import { Project } from '../../../models/project';
+import { ProjectService } from '../../../services/project/project.service';
+import { SliderComponent } from '../../slider/slider.component';
 import {
   animate,
   keyframes,
@@ -30,6 +31,8 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { ThemeService } from '../../../services/theme/theme.service';
+import { ModalVideoComponent } from '../../modal-video/modal-video.component';
 
 @Component({
   selector: 'app-projects',
@@ -44,6 +47,8 @@ import {
     NgSwitch,
     NgStyle,
     SliderComponent,
+    NgOptimizedImage,
+    ModalVideoComponent,
   ],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css',
@@ -100,12 +105,16 @@ export class ProjectsComponent implements AfterViewInit {
   tabIndex: number = 0;
   tabIndexTemp: number = 0;
 
+  showVideoModal: boolean = false;
+
   projectsObservable: Observable<Project[]>;
+  currentSelectedProject: Project | undefined;
 
   constructor(
     private projectService: ProjectService,
     private readonly elementRef: ElementRef,
     private cdRef: ChangeDetectorRef,
+    private themeService: ThemeService,
   ) {
     this.projectsObservable = this.projectService.findAll();
   }
@@ -154,6 +163,15 @@ export class ProjectsComponent implements AfterViewInit {
       }, 10);
     }
     this.cdRef.detectChanges();
+  }
+
+  openVideoModal(project: Project) {
+    this.currentSelectedProject = project;
+    this.showVideoModal = true;
+  }
+
+  isDarkMode(): Observable<boolean> {
+    return this.themeService.isDarkMode;
   }
 
   protected readonly isSuccess = isSuccess;

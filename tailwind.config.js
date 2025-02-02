@@ -25,7 +25,7 @@ module.exports = {
     },
   },
   plugins: [
-    require('preline/plugin'),
+    require('preline/plugin')
   ],
 }
 

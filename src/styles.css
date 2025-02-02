@@ -1,17 +1,44 @@
-
-
 /* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-#terminal {
-  resize: both;
-  font-family: monospace;
+/*@media (prefers-reduced-motion: no-preference) {*/
+/*  *:not(.animate-spin, .transition-all, .transition-transform, transition-colors) {*/
+/*    transition: border-color 0.5s ease, text-decoration-color 0.5s ease, fill 0.5s ease, stroke 0.5s ease, background-color 0.5s ease;*/
+/*  }*/
+/*}*/
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover {
+  color: rgba(255, 235, 225, 0.5);
+  -webkit-text-fill-color: rgba(255, 235, 225, 0.8);
+  transition: background-color 5000s ease-in-out;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  *:not(.animate-spin, .transition-all, .transition-transform) {
-    transition: border-color 0.5s ease, text-decoration-color 0.5s ease, fill 0.5s ease, stroke 0.5s ease, background-color 0.5s ease;
-  }
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  color: rgb(255, 235, 225);
+  -webkit-text-fill-color: rgb(255, 235, 225);
+  transition: background-color 5000s ease-in-out;
+  caret-color: white;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover {
+  color: rgba(165, 243, 252, 0.75);
+  -webkit-text-fill-color: rgba(165, 243, 252, 0.8);
+  transition: background-color 5000s ease-in-out;
+}
+
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  color: rgba(165, 243, 252, 1);
+  -webkit-text-fill-color: rgba(165, 243, 252, 1);
+  transition: background-color 5000s ease-in-out;
+  caret-color: white;
+}
+
+.custom-toast {
+  margin-top: 6rem !important;
 }

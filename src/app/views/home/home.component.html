@@ -1,5 +1,5 @@
-<section id="hero" #section class="relative h-full">
-  <app-hero />
+<section id="hero" #section class="relative">
+  <app-hero class="h-[80%]" />
   <ng-container *ngIf="sections">
     <button
       (click)="goToNextSection()"
@@ -14,14 +14,12 @@
     </button>
   </ng-container>
 </section>
-<section id="projects" #section class="bg-gray-200 bg-opacity-90 dark:bg-neutral-900 relative h-full items-center">
-  <div class="h-full w-full flex flex-col gap-y-8 px-12 py-12">
-    <app-projects />
-  </div>
+<section id="projects" #section class="bg-cyan-100 bg-opacity-50 dark:bg-neutral-900 dark:bg-opacity-100 relative">
+  <app-projects />
 </section>
-<section id="about-me" #section class="relative h-full">
-  <p>Section à propos de moi</p>
+<section id="about-me" #section class="relative">
+  <app-about-me />
 </section>
-<section id="contact" #section class="relative h-full">
-  <p>Section contact</p>
+<section id="contact" #section class="flex justify-center items-center">
+  <app-contact />
 </section>

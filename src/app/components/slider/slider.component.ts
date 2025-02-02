@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostListener,
   Input,
   Output,
   QueryList,
@@ -90,6 +90,11 @@ export class SliderComponent<T> {
   reload(event: any) {
     event.preventDefault();
     this.loadObservable.emit();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.updateCurrentSliderPositionX();
   }
 
   updateCurrentSliderPositionX(): void {
