@@ -3,11 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/*@media (prefers-reduced-motion: no-preference) {*/
-/*  *:not(.animate-spin, .transition-all, .transition-transform, transition-colors) {*/
-/*    transition: border-color 0.5s ease, text-decoration-color 0.5s ease, fill 0.5s ease, stroke 0.5s ease, background-color 0.5s ease;*/
-/*  }*/
-/*}*/
+@media (prefers-reduced-motion: no-preference) {
+  *:not(.animate-spin, .animate-ping, .transition-all, .transition-none, .transition-transform, transition-colors) {
+    transition: border-color 0.5s ease, text-decoration-color 0.5s ease, fill 0.5s ease, stroke 0.5s ease, background-color 0.5s ease;
+  }
+}
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover {
@@ -41,4 +41,22 @@ input:-webkit-autofill:active {
 
 .custom-toast {
   margin-top: 6rem !important;
+}
+
+@keyframes scroll-background-x {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@keyframes scroll-background-y {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
 }

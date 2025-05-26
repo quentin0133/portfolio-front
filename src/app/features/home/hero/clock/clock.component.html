@@ -1,0 +1,35 @@
+<div
+  [@flotterAnimation]="floatState"
+  class="flex justify-center relative w-full h-full aspect-[644/753]"
+>
+  <img
+    loading="lazy"
+    alt="Une montre à gousset tenu par une main, elle flotte de haut en bas comme un nuage"
+    ngSrc="/assets/time/clock/clock.png"
+    height="753" width="644"
+  />
+  <img
+    loading="lazy"
+    alt="Une aiguille indiquant les heures, séparé de l'horloge, elle permet d'indiquer dynamiquement l'heure"
+    class="absolute"
+    [ngStyle]="{'transform': 'rotate(' + hourAngle + 'deg)'}"
+    ngSrc="/assets/time/clock/clock-small-hand.png"
+    height="753" width="644"
+  />
+  <img
+    loading="lazy"
+    alt="Une aiguille indiquant les minutes, séparé de l'horloge, elle permet d'indiquer dynamiquement l'heure"
+    class="absolute"
+    [ngStyle]="{'transform': 'rotate(' + minuteAngle + 'deg)'}"
+    ngSrc="/assets/time/clock/clock-big-hand.png"
+    height="753" width="644"
+  />
+  <img
+    loading="lazy"
+    alt="Une aiguille indiquant les secondes, séparé de l'horloge, elle permet d'indiquer dynamiquement l'heure"
+    class="absolute"
+    [ngStyle]="{'transform': 'rotate(' + secondAngle + 'deg)'}"
+    ngSrc="/assets/time/clock/clock-second-hand.png"
+    height="753" width="644"
+  />
+</div>

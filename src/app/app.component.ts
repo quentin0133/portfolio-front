@@ -8,14 +8,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { NgClass } from '@angular/common';
-import { ThemeService } from './services/theme/theme.service';
+import { NavBarComponent } from './shared/components/nav-bar/nav-bar.component';
+import { ThemeService } from './shared/services/theme/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavBarComponent, NgClass],
+  imports: [RouterOutlet, NavBarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

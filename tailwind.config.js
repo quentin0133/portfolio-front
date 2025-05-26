@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'skeleton-reflection': 'skeletonReflection 3.5s ease-in-out infinite'
+        'skeleton-reflection': 'skeletonReflection 3.5s ease-in-out infinite',
+        'border-spin': 'borderRotate 6s linear infinite'
       },
       keyframes: {
         skeletonReflection: {
@@ -21,6 +22,11 @@ module.exports = {
             backgroundSize: '200% 400%'
           },
         },
+        borderRotate: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        }
       },
     },
   },

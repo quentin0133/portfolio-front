@@ -1,0 +1,8 @@
+.strip {
+  flex: 1; /* Largeur auto pour remplir l'écran */
+  height: 100%;
+  background-image: url('/assets/your-pattern.png'); /* Ton pattern */
+  background-size: auto 100%;
+  background-repeat: repeat;
+  transform-origin: center;
+}

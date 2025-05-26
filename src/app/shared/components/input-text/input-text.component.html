@@ -1,0 +1,32 @@
+<div class="relative size-full bg-blue-500 dark:bg-neutral-700">
+  <input autocomplete="email" class="peer px-2 py-2 outline-0 block w-full transition-all ease-in-out duration-200 border-b-4 border-b-cyan-300
+    text-sm placeholder:text-transparent placeholder:select-none focus:border-blue-600 focus:border-t-transparent focus:border-x-transparent focus:border-b-white focus:ring-0 disabled:opacity-50 disabled:pointer-events-none dark:border-b-neutral-600 dark:text-neutral-300 dark:focus:ring-neutral-600 dark:focus:border-b-neutral-200
+    bg-transparent
+    focus:pt-5
+    text-cyan-100
+    focus:text-white
+    focus:pb-1
+    [&:not(:placeholder-shown)]:pt-5
+    [&:not(:placeholder-shown)]:pb-1
+    resize-none" [id]="id + '-text'" [name]="name" [placeholder]="placeholder" type="text"
+    [value]="value"
+    (input)="onChange($event)"
+    (blur)="onTouched()"
+    [pattern]="pattern"
+  />
+  <label class="absolute top-1/2 -translate-y-1/2 start-0 px-2 py-2 text-sm pointer-events-none transition-all ease-in-out duration-200 border border-transparent origin-[0_0] peer-disabled:opacity-50 peer-disabled:pointer-events-none
+      font-bold
+      text-cyan-100
+      bg-transparent
+      peer-focus:text-xs
+      peer-focus:-translate-y-1.5
+      peer-focus:top-0
+      peer-focus:text-white
+      dark:peer-focus:text-neutral-200
+      peer-[:not(:placeholder-shown)]:top-0
+      peer-[:not(:placeholder-shown)]:text-xs
+      peer-[:not(:placeholder-shown)]:-translate-y-1.5
+      dark:text-neutral-400" [for]="id + '-text'">
+    {{label}}
+  </label>
+</div>

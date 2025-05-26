@@ -1,0 +1,4 @@
+#text-about-me::-webkit-scrollbar {
+  width: auto;
+  margin-right: 10px;
+}

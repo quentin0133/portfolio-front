@@ -1,0 +1,41 @@
+<div class="relative dropdown-container size-full bg-blue-500 dark:bg-neutral-700">
+  <button (click)="toggleMenu()"
+    [ngClass]="isOpen ? 'text-white dark:text-neutral-200' :
+    'text-cyan-100 dark:text-neutral-300'"
+    class="peer bg-transparent shadow-none outline-0 text-sm p-2 ring-0
+    w-full disabled:opacity-50 disabled:pointer-events-none text-left
+    flex justify-between items-center"
+    [name]="name"
+  >
+    <p class="pt-4">
+      {{ currentOption }}
+    </p>
+    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor"
+         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    </svg>
+  </button>
+
+  <ul
+    *ngIf="isOpen"
+    class="absolute z-10 w-full max-h-48 overflow-auto
+    text-sm bg-blue-500 dark:bg-neutral-700
+    border-2 border-cyan-200 dark:border-neutral-500"
+  >
+    <li (click)="selectOption(option)" *ngFor="let option of options"
+        class="p-2 transition-none hover:bg-blue-600 dark:hover:bg-neutral-800 hover:text-white cursor-pointer">
+      {{ option }}
+    </li>
+  </ul>
+
+  <label
+    [ngClass]="isOpen ? 'text-white dark:text-neutral-200' :
+    'text-cyan-100 dark:text-neutral-400'"
+    class="absolute bg-transparent top-0 py-1 px-2 start-0 h-full
+    pointer-events-none transition ease-in-out duration-100
+    peer-disabled:opacity-50 peer-disabled:pointer-events-none
+    font-bold text-xs"
+  >
+    {{ label }}
+  </label>
+</div>
