@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from "rxjs";
-import {ThemeService} from "../../../shared/services/theme/theme.service";
-import {NgOptimizedImage} from "@angular/common";
-import {BgAboutMeComponent} from "./bg-about-me/bg-about-me.component";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../shared/services/theme/theme.service';
+import { NgOptimizedImage } from '@angular/common';
+import { BgAboutMeComponent } from './bg-about-me/bg-about-me.component';
 
 @Component({
   selector: 'app-about-me',

@@ -17,9 +17,9 @@ import {
   LoadingStatePipe,
 } from '../../../shared/pipe/loading-state/loading-state.pipe';
 import { StatusJob } from '../../../core/models/status-job';
-import {ThemeService} from "../../../shared/services/theme/theme.service";
-import {SettingService} from "../../../core/services/setting/setting.service";
-import {SectionScrollService} from "../../../shared/services/section-scroll/section-scroll.service";
+import { ThemeService } from '../../../shared/services/theme/theme.service';
+import { SettingService } from '../../../core/services/setting/setting.service';
+import { SectionScrollService } from '../../../shared/services/section-scroll/section-scroll.service';
 
 const WRITING_SPEED = 65;
 const ERASE_SPEED = 65;
@@ -67,17 +67,16 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isDarkMode: boolean = false;
 
-  statusJob: Observable<StatusJob>;
+  statusJob!: Observable<StatusJob>;
 
   constructor(
     private readonly themeService: ThemeService,
     private sectionService: SectionScrollService,
-    settingService: SettingService,
-  ) {
-    this.statusJob = settingService.getSearchJobStatus();
-  }
+    private settingService: SettingService,
+  ) {}
 
   ngOnInit(): void {
+    this.retrieveStatusJob();
     this.isDarkMode = this.themeService.isDarkThemePreferred();
     this.themeChangeSubscription = this.themeService.isDarkMode.subscribe(
       (isDarkMode) => {
@@ -205,7 +204,11 @@ export class HeroComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   goToNextSection() {
-    this.sectionService.goToNextSection();
+    this.sectionService.goToSection(1);
+  }
+
+  retrieveStatusJob() {
+    this.statusJob = this.settingService.getSearchJobStatus();
   }
 
   protected readonly isLoading = isLoading;

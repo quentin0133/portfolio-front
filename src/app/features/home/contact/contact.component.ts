@@ -7,9 +7,8 @@ import { Email } from '../../../core/models/email';
 import { LoadingStatePipe } from '../../../shared/pipe/loading-state/loading-state.pipe';
 import { NgIf } from '@angular/common';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import {EmailService} from "../../../core/services/email/email.service";
-import {BgAboutMeComponent} from "../about-me/bg-about-me/bg-about-me.component";
-import {BgContactComponent} from "./bg-contact/bg-contact.component";
+import { EmailService } from '../../../core/services/email/email.service';
+import { BgContactComponent } from './bg-contact/bg-contact.component';
 
 @Component({
   selector: 'app-contact',
@@ -21,7 +20,6 @@ import {BgContactComponent} from "./bg-contact/bg-contact.component";
     TextareaComponent,
     NgIf,
     ToastrModule,
-    BgAboutMeComponent,
     BgContactComponent,
   ],
   templateUrl: './contact.component.html',
@@ -45,7 +43,12 @@ export class ContactComponent {
   onSubmit(event: any, ngForm: NgForm) {
     event.preventDefault();
 
-    if (ngForm.invalid) return;
+    if (ngForm.invalid) {
+      Object.values(ngForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      return;
+    }
 
     this.isLoadingEmail = true;
 
@@ -53,7 +56,7 @@ export class ContactComponent {
       next: () => {
         this.isLoadingEmail = false;
         this.toastr.success(
-          'Je vous répondrai dès que je pourrais.',
+          'Je vous répondrai dès que je pourrais',
           'Email envoyé avec succès !',
         );
       },
@@ -67,4 +70,6 @@ export class ContactComponent {
       },
     });
   }
+
+  protected readonly console = console;
 }

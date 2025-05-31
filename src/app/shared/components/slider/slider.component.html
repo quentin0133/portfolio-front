@@ -1,22 +1,27 @@
-<div class="relative w-full h-fit mx-auto">
+<div class="relative w-full h-full mx-auto">
   <ng-container *ngIf="isSuccessState(state)">
-    <div class="h-fit overflow-hidden relative">
+    <div class="h-full overflow-hidden relative">
       <div
-        #sliderContainer
         [style.transform]="'translateX(' + currentSlidePositionX + 'px)'"
-        class="h-fit flex items-center xl:gap-x-2 md:gap-x-4 gap-x-24 transition-transform duration-700 ease-in-out">
-        <div
-          #sliderItem
-          (elementReady)="updateCurrentSliderPositionX()"
-          *ngFor="let data of state.data; let i = index"
-          [ngClass]="{'scale-100 sm:scale-75': activeIndex !== i, '-z-10': activeIndex !== i}"
-          class="bg-white dark:bg-neutral-700 rounded-lg transition-transform duration-700 ease-in-out"
-        >
-          <ng-container *ngTemplateOutlet="childTemplate; context: { $implicit: data }"></ng-container>
-        </div>
+        class="h-full flex items-center xl:gap-x-2 md:gap-x-4 gap-x-24 transition-transform duration-700 ease-in-out">
+        @if (state.data.length > 0) {
+          <div
+            #sliderItem
+            (elementReady)="updateCurrentSliderPositionX()"
+            *ngFor="let data of state.data; let i = index"
+            [ngClass]="{'scale-100 sm:scale-75': activeIndex !== i, '-z-10': activeIndex !== i}"
+            class="h-full bg-white dark:bg-neutral-700 rounded-lg transition-transform duration-700 ease-in-out"
+          >
+            <ng-container *ngTemplateOutlet="childTemplate; context: { $implicit: data }"></ng-container>
+          </div>
+        } @else {
+          <div #sliderItem class="h-full">
+            <ng-container *ngTemplateOutlet="noContentTemplate"></ng-container>
+          </div>
+        }
       </div>
     </div>
-    <button (click)="handlePrev()" [disabled]="0 === activeIndex"
+    <button (click)="handlePrev()" [disabled]="state.data.length === 0 || 0 === activeIndex"
             class="hs-carousel-prev disabled:opacity-0 transition-all duration-300 ease-in-out disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-white/50 hover:bg-white/70 rounded-s-lg dark:text-white dark:bg-neutral-600/40 dark:hover:bg-neutral-600/60"
             type="button">
         <span aria-hidden="true" class="text-2xl">
@@ -26,9 +31,9 @@
             <path d="m15 18-6-6 6-6"></path>
           </svg>
         </span>
-      <span class="sr-only">Précédent</span>
+      <span class="sr-only">Pr&eacute;c&eacute;dent</span>
     </button>
-    <button (click)="handleNext()" [disabled]="state.data.length - 1 === activeIndex"
+    <button (click)="handleNext()" [disabled]="state.data.length === 0 || state.data.length - 1 === activeIndex"
             class="hs-carousel-next disabled:opacity-0 transition-all duration-300 ease-in-out disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-white/50 hover:bg-white/70 rounded-e-lg dark:text-white dark:bg-neutral-600/40 dark:hover:bg-neutral-600/60"
             type="button">
       <span class="sr-only">Suivant</span>
@@ -42,11 +47,10 @@
     </button>
   </ng-container>
   <ng-container *ngIf="!isSuccessState(state)">
-    <div class="h-fit overflow-hidden relative">
+    <div class="h-full overflow-hidden relative">
       <div
-        #sliderContainer
         [style.transform]="'translateX(' + currentSlidePositionX + 'px)'"
-        class="h-fit flex items-center xl:gap-x-2 md:gap-x-4 gap-x-24 transition-transform duration-700 ease-in-out">
+        class="h-full flex items-center xl:gap-x-2 md:gap-x-4 gap-x-24 transition-transform duration-700 ease-in-out">
         <div
           #sliderItem
           (elementReady)="updateCurrentSliderPositionX()"
@@ -65,7 +69,7 @@
                     Erreur de connexion
                   </h3>
                   <div class="mt-2 text-sm">
-                    Veuillez réessayer de charger les données
+                    Veuillez r&eacute;essayer de charger les donn&eacute;es
                   </div>
                 </div>
                 <div>
@@ -99,7 +103,7 @@
             <path d="m15 18-6-6 6-6"></path>
           </svg>
         </span>
-      <span class="sr-only">Précédent</span>
+      <span class="sr-only">Pr&eacute;c&eacute;dent</span>
     </button>
     <button (click)="handleNext()" [disabled]="true"
             class="hs-carousel-next disabled:opacity-0 transition-all duration-300 ease-in-out disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 bg-white/50 hover:bg-white/70 rounded-e-lg dark:text-white dark:bg-neutral-600/40 dark:hover:bg-neutral-600/60"

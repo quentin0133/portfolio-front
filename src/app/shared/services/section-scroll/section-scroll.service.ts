@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, distinctUntilChanged, Subject} from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,8 +7,7 @@ import {BehaviorSubject, distinctUntilChanged, Subject} from 'rxjs';
 export class SectionScrollService {
   private scrollSubject$ = new BehaviorSubject<number>(0);
   private sectionCount$: number = 0;
-  scroll = this.scrollSubject$.asObservable()
-    .pipe(distinctUntilChanged());
+  scroll = this.scrollSubject$.asObservable().pipe(distinctUntilChanged());
 
   get currentIndex() {
     return this.scrollSubject$.value;
@@ -19,11 +18,9 @@ export class SectionScrollService {
   }
 
   goToSection(index: number) {
-    if (index < 0)
-      index = 0;
+    if (index < 0) index = 0;
 
-    if (index > this.sectionCount$ - 1)
-      index = this.sectionCount$ - 1;
+    if (index > this.sectionCount$ - 1) index = this.sectionCount$ - 1;
 
     this.scrollSubject$.next(index);
   }

@@ -6,35 +6,37 @@
   >
     <app-slider
       (activeIndexChange)="setActiveIndex($event)"
-      (loadObservable)="reload()"
+      (loadObservable)="retrieveProjects()"
       [activeIndex]="projectCurrentIndexTemp"
       [state]="projectsState"
-      class="h-fit"
+      class="h-[65%]"
     >
       <ng-template [typedTemplate]="{ $implicit: projectType }" let-project>
         <div
           [style.background-image]="'url(' + coverImageUrlCache.get(project.coverImage.fileName) + ')'"
-          class="w-full h-[45%] aspect-[4/3] flex flex-col p-4 border-8 bg-neutral-300 border-white dark:border-neutral-600 bg-cover bg-center"
+          class="flex flex-col p-4 border-8 bg-neutral-300 border-white dark:border-neutral-600 bg-cover bg-center"
         >
           <div
             class="text-blue-500 dark:text-blue-600 bg-white rounded-2xl w-fit px-2 py-1 border-4 border-blue-500 dark:border-blue-600 font-bold">
             <p>Statut : {{ ProjectStatusLabels[project.status] }}</p>
           </div>
           <div class="flex-grow">
-
           </div>
           <ul class="w-full grid grid-cols-7 gap-x-3 gap-y-4 items-center">
             <li
               *ngFor="let tag of project.tags"
-              [style.background-color]="(isDarkMode() | async) ? tag.tagType.backgroundColorDark : tag.tagType.backgroundColorLight"
-              [style.border-color]="(isDarkMode() | async) ? tag.tagType.textColorDark : tag.tagType.textColorLight"
-              [style.color]="(isDarkMode() | async) ? tag.tagType.textColorDark : tag.tagType.textColorLight"
+              [style.background-color]="isDarkTheme ? tag.tagType.backgroundColorDark : tag.tagType.backgroundColorLight"
+              [style.border-color]="isDarkTheme ? tag.tagType.textColorDark : tag.tagType.textColorLight"
+              [style.color]="isDarkTheme ? tag.tagType.textColorDark : tag.tagType.textColorLight"
               class="text-center border-2 select-none py-1.5 px-3 rounded-full text-xs font-medium + category.color"
             >
               {{ tag.name }}
             </li>
           </ul>
         </div>
+      </ng-template>
+      <ng-template #noContent>
+        <img [src]="isDarkTheme ? '/assets/space/placeholder-project-space.webp' : '/assets/time/placeholder-project-time.webp'" class="aspect-[4/3] size-full flex flex-col border-8 bg-neutral-300 border-white dark:border-neutral-600 object-cover" alt="Image remplacement quand il n'y a pas de projets" />
       </ng-template>
     </app-slider>
     <div
@@ -45,11 +47,10 @@
         <div class="flex gap-x-2">
           <div
             class="-mb-px py-3 select-none px-4 inline-flex projects-center gap-x-2 text-sm font-medium text-center text-red-200 bg-red-700 rounded-t-lg pointer-events-none">
-            Résumé du projet
+            R&eacute;sum&eacute; du projet
           </div>
           <div
             class="-mb-px py-3 select-none px-4 inline-flex items-center gap-x-2 text-sm font-medium text-center text-red-200 bg-red-800 rounded-t-lg disabled:opacity-50 disabled:pointer-events-none">
-            Réalisations
           </div>
         </div>
       </div>
@@ -70,11 +71,11 @@
         <div class="flex gap-x-2">
           <div
             class="-mb-px py-3 select-none px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center text-gray-500 rounded-t-lg pointer-events-none dark:bg-neutral-800 dark:text-neutral-400">
-            Résumé du projet
+            R&eacute;sum&eacute; du projet
           </div>
           <div
             class="-mb-px py-3 select-none px-4 inline-flex items-center gap-x-2 bg-gray-100 text-sm font-medium text-center text-gray-500 rounded-t-lg disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:text-neutral-400">
-            Réalisations
+            R&eacute;alisations
           </div>
         </div>
       </div>
@@ -106,7 +107,7 @@
               role="tab"
               type="button"
             >
-              Résumé du projet
+              R&eacute;sum&eacute; du projet
             </button>
             <button
               type="button"
@@ -119,7 +120,7 @@
               id="card-type-tab-item-2"
               role="tab"
             >
-              Réalisations
+              R&eacute;alisations
             </button>
             <ng-container>
               <div *ngIf="currentProject.idVideo" class="lg:pl-4 lg:pr-2 pl-2 py-2">
@@ -128,7 +129,7 @@
                   (click)="openVideoModal()"
                   class="px-2 h-full inline-flex items-center gap-x-2 font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-neutral-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700"
                 >
-                  <svg *ngIf="isDarkMode() | async; else youtubeLight" height="32" viewBox="0,0,256,256"
+                  <svg *ngIf="isDarkTheme; else youtubeLight" height="32" viewBox="0,0,256,256"
                        width="32" x="0px" xmlns="http://www.w3.org/2000/svg" y="0px">
                     <g fill="none" fill-rule="nonzero" font-family="none" font-size="none" font-weight="bold"
                        stroke="none" stroke-dasharray="" stroke-dashoffset="0" stroke-linecap="butt"
@@ -149,11 +150,11 @@
                       <path d="M20 31L20 17 32 24z" fill="#FFF"></path>
                     </svg>
                   </ng-template>
-                  Présentation vidéo
+                  Pr&eacute;sentation vid&eacute;o
                 </button>
               </div>
               <div *ngIf="currentProject.demoLink" class="select-none p-2">
-                <a [href]="currentProject.demoLink" aria-label="Lien de la démo du projet (lien externe)"
+                <a [href]="currentProject.demoLink" aria-label="Lien de la d&eacute;mo du projet (lien externe)"
                    class="cursor-pointer px-2 h-full inline-flex items-center gap-x-2 font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-neutral-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700" rel="noopener" role="link"
                    target="_blank">
                   <svg class="size-6 dark:text-white" fill="currentColor" viewBox="0 0 24 24"
@@ -162,14 +163,14 @@
                           d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z"
                           fill-rule="evenodd"/>
                   </svg>
-                  Lien de la démo
+                  Lien de la d&eacute;mo
                 </a>
               </div>
               <div *ngIf="currentProject.gitLink" class="select-none p-2">
                 <a [href]="currentProject.gitLink" aria-label="Lien du git du projet (lien externe)"
                    class="cursor-pointer px-2 h-full inline-flex items-center gap-x-2 font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-neutral-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700" rel="noopener" role="link"
                    target="_blank">
-                  <svg *ngIf="isDarkMode() | async; else gitLight" height="30" viewBox="0,0,256,256" width="30"
+                  <svg *ngIf="isDarkTheme; else gitLight" height="30" viewBox="0,0,256,256" width="30"
                        x="0px" xmlns="http://www.w3.org/2000/svg" y="0px">
                     <g fill="#ffffff" fill-rule="nonzero" font-family="none" font-size="none" font-weight="normal"
                        stroke="none" stroke-dasharray="" stroke-dashoffset="0" stroke-linecap="butt"
@@ -246,7 +247,13 @@
             (@fadeInOut.done)="onAnimationDone($event)"
             [@fadeInOut]="textAnimationState"
             class="bg-gradient-to-r from-black from-30% to-transparent to-60% bg-clip-text text-transparent dark:from-white lg:text-lg text-md">
-            L'absence n'est qu'une promesse silencieuse de ce qui est à venir.
+            @if (isDarkTheme) {
+              Aucun projet d&eacute;tect&eacute; dans cette galaxie.<br>
+              Mais bon, ça laisse de la place pour rêver.
+            } @else {
+              Aucun projet à l’horizon.<br>
+              Juste des nuages de potentiel qui flottent en paix.
+            }
           </p>
         </div>
       </ng-container>

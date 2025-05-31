@@ -146,14 +146,14 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       deltaY > sensitivity &&
       this.currentSectionIndex < this.sections.length - 1
     ) {
-      // Scroll vers le bas, aller à la section suivante
+      // Scroll down, go to next section
       this.goToNextSection();
     } else if (deltaY < -sensitivity && this.currentSectionIndex > 0) {
-      // Scroll vers le haut, aller à la section précédente
+      // Scroll up, go to previous section
       this.goToPreviousSection();
     }
 
-    // Mettez à jour la position de départ du touch pour la prochaine interaction
+    // Update touch start position for next interaction
     this.touchStartY = touchMoveY;
   }
 
@@ -256,10 +256,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       (entries) => {
         if (entries[0].isIntersecting) {
           loadingSection();
-          observer.disconnect(); // une fois chargé, on arrête d'observer
+          observer.disconnect();
         }
       },
-      { threshold: 0.8 },
+      { threshold: 0.1 },
     );
 
     observer.observe(elementObserved.nativeElement);

@@ -8,10 +8,9 @@ describe('ModalVideoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ModalVideoComponent]
-    })
-    .compileComponents();
-    
+      imports: [ModalVideoComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ModalVideoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

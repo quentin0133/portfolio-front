@@ -1,13 +1,13 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
-import * as THREE from 'three';
+import {Color, Mesh, PerspectiveCamera, PlaneGeometry, Scene, ShaderMaterial, WebGLRenderer} from 'three';
 
 @Injectable({ providedIn: 'root' })
 export class BgDarkContactService {
   private canvas!: HTMLCanvasElement;
-  private renderer!: THREE.WebGLRenderer;
-  private scene: THREE.Scene = new THREE.Scene();
-  private camera!: THREE.PerspectiveCamera;
-  private plane!: THREE.Mesh;
+  private renderer!: WebGLRenderer;
+  private scene: Scene = new Scene();
+  private camera!: PerspectiveCamera;
+  private plane!: Mesh;
 
   private frameId: number | null = null;
 
@@ -18,18 +18,15 @@ export class BgDarkContactService {
       cancelAnimationFrame(this.frameId);
     }
 
-    if (this.renderer?.domElement.parentNode) {
-      this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
-    }
-
     this.scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        if (object.geometry) object.geometry.dispose();
-        if (object.material) {
-          if (Array.isArray(object.material)) {
-            object.material.forEach((material) => material.dispose());
+      let mesh = object as Mesh;
+      if (mesh.isMesh) {
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((material) => material.dispose());
           } else {
-            object.material.dispose();
+            mesh.material.dispose();
           }
         }
       }
@@ -39,6 +36,8 @@ export class BgDarkContactService {
 
     if (this.renderer) {
       this.renderer.dispose();
+      this.renderer.domElement.width = 1;
+      this.renderer.domElement.height = 1;
     }
   }
 
@@ -55,11 +54,10 @@ export class BgDarkContactService {
   async initThreeJS(canvas: ElementRef<HTMLCanvasElement>): Promise<void> {
     this.canvas = canvas.nativeElement;
 
-    // Initialisation scène, caméra et rendu
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x000000);
+    this.scene = new Scene();
+    this.scene.background = new Color(0x000000);
 
-    this.camera = new THREE.PerspectiveCamera(
+    this.camera = new PerspectiveCamera(
       75,
       this.canvas.offsetWidth / this.canvas.offsetHeight,
       0.1,
@@ -67,22 +65,23 @@ export class BgDarkContactService {
     );
     this.camera.position.z = 5;
 
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new WebGLRenderer({
+      canvas: this.canvas
+    });
     this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
-    this.canvas.appendChild(this.renderer.domElement);
 
-    const geometry = new THREE.PlaneGeometry(16, 16);
+    const geometry = new PlaneGeometry(16, 16);
     let rand = Math.random() * 1000;
-    const material = new THREE.ShaderMaterial({
+    const material = new ShaderMaterial({
       vertexShader: this.vertexShader(),
       fragmentShader: this.fragmentShader(),
       uniforms: {
         u_time: { value: 0.0 },
-        u_seed: { value: rand }
-      }
+        u_seed: { value: rand },
+      },
     });
 
-    this.plane = new THREE.Mesh(geometry, material);
+    this.plane = new Mesh(geometry, material);
     this.scene.add(this.plane);
   }
 
@@ -109,7 +108,7 @@ export class BgDarkContactService {
       this.render();
     });
 
-    const material = this.plane.material as THREE.ShaderMaterial;
+    const material = this.plane.material as ShaderMaterial;
     material.uniforms['u_time'].value = performance.now() * 0.001;
 
     this.renderer.render(this.scene, this.camera);
@@ -133,7 +132,6 @@ export class BgDarkContactService {
       uniform float u_time;
       uniform float u_seed;
 
-      // Fonction bruit améliorée
       float hash(vec2 p) {
           return fract(sin(dot(p + u_seed, vec2(127.1, 311.7))) * 43758.5453123);
       }
@@ -165,7 +163,6 @@ export class BgDarkContactService {
           return value;
       }
 
-      // Génération d'un champ de flux pour donner du mouvement
       vec2 flow(vec2 p) {
           float angle = fbm(p * 1.5 + u_time * 0.2) * 6.28;
           return vec2(cos(angle), sin(angle));
@@ -181,10 +178,8 @@ export class BgDarkContactService {
 
           float nebula = fbm(vec2(uv.x + u_time * 0.05, uv.y));
 
-          // Définition des seuils d'alpha (thresholds)
           float alpha = nebula;
 
-          // Définition des couleurs pour chaque palier
           vec3 black = vec3(0.03, 0.03, 0.03);
           vec3 dark_purple = vec3(0.1, 0.05, 0.19);
           vec3 magenta = vec3(0.32, 0.16, 0.52);

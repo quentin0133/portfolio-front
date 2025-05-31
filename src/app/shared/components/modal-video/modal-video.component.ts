@@ -1,19 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgClass, NgIf } from '@angular/common';
-import { SafeUrlPipe } from '../../pipe/safe-url/SafeUrl.pipe';
-import { YoutubePlayerComponent } from 'ngx-youtube-player';
-import {YoutubeVideoComponent} from "../youtube-video/youtube-video.component";
+import { YoutubeVideoComponent } from '../youtube-video/youtube-video.component';
 
 @Component({
   selector: 'app-modal-video',
   standalone: true,
-  imports: [
-    NgClass,
-    SafeUrlPipe,
-    NgIf,
-    YoutubePlayerComponent,
-    YoutubeVideoComponent,
-  ],
+  imports: [NgClass, NgIf, YoutubeVideoComponent],
   templateUrl: './modal-video.component.html',
   styleUrl: './modal-video.component.css',
 })

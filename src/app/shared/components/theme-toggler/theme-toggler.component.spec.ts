@@ -8,10 +8,9 @@ describe('ThemeTogglerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ThemeTogglerComponent]
-    })
-    .compileComponents();
-    
+      imports: [ThemeTogglerComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ThemeTogglerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,13 +1,15 @@
 import {
-  ChangeDetectionStrategy,
+  AfterViewInit,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
   EventEmitter,
   HostListener,
-  Input,
+  Input, NgZone, OnChanges,
   Output,
-  QueryList, TemplateRef,
+  QueryList, SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -20,7 +22,7 @@ import {
 import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common';
 import { RangePipe } from '../../pipe/range/range.pipe';
 import { ElementReadyDirective } from '../../directives/element-ready.directive';
-import {TypedTemplateDirective} from "../../directives/typed-template.directive";
+import {take} from "rxjs";
 
 @Component({
   selector: 'app-slider',
@@ -37,12 +39,15 @@ import {TypedTemplateDirective} from "../../directives/typed-template.directive"
   templateUrl: './slider.component.html',
   styleUrl: './slider.component.css',
 })
-export class SliderComponent<T> {
+export class SliderComponent<T> implements OnChanges {
   readonly SIMULATE_ACTIVE_CARD: number = 0;
   readonly SIMULATE_NUMBER_CARD: number = 2;
 
   @ContentChild(TemplateRef)
   childTemplate!: TemplateRef<{ $implicit: T }>;
+
+  @ContentChild('noContent')
+  noContentTemplate!: TemplateRef<any>;
 
   @Input()
   state: State<T[]> = { state: 'loading' };
@@ -55,13 +60,19 @@ export class SliderComponent<T> {
   @Output()
   activeIndexChange: EventEmitter<number> = new EventEmitter<number>();
 
-  @ViewChild('sliderContainer', { static: false })
-  sliderContainer!: ElementRef;
-
   @ViewChildren('sliderItem')
   sliderItems: QueryList<ElementRef> = new QueryList<ElementRef>();
 
   currentSlidePositionX: number = 0;
+
+  constructor(private cdRef: ChangeDetectorRef) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['state'] && !isLoading(changes['state'].currentValue)) {
+      setTimeout(() => this.updateCurrentSliderPositionX());
+    }
+  }
 
   handleNext() {
     if (!isSuccess(this.state)) return;
@@ -89,9 +100,11 @@ export class SliderComponent<T> {
   }
 
   updateCurrentSliderPositionX(): void {
-    if (!this.sliderContainer || this.sliderItems.length === 0) return;
+    let currentSlide;
 
-    const currentSlide = this.sliderItems.get(this.activeIndex);
+    if (this.sliderItems.length === 0) return;
+
+    currentSlide = this.sliderItems.get(this.activeIndex);
 
     if (!currentSlide) return;
 
@@ -102,8 +115,43 @@ export class SliderComponent<T> {
     const rectCenterX = rect.left + rect.width / 2;
     const parentCenterX = parentRect.left + parentRect.width / 2;
 
-    this.currentSlidePositionX = parentCenterX - rectCenterX;
+    this.currentSlidePositionX = parentCenterX - rectCenterX
+
+    this.cdRef.detectChanges();
   }
+
+  async loadAllImagesAsync(images: HTMLImageElement[]): Promise<void> {
+    console.log(images)
+    const promises = images.map((img) => {
+      return new Promise<void>((resolve) => {
+        if (img.complete && img.naturalHeight !== 0) {
+          resolve();
+        } else {
+          const cleanup = () => {
+            img.removeEventListener('load', onLoad);
+            img.removeEventListener('error', onError);
+          };
+
+          const onLoad = () => {
+            cleanup();
+            resolve();
+          };
+
+          const onError = () => {
+            cleanup();
+            resolve();
+          };
+
+          img.addEventListener('load', onLoad);
+          img.addEventListener('error', onError);
+        }
+      });
+    });
+
+    return Promise.all(promises).then(() => void 0);
+  }
+
+
 
   protected readonly isSuccessState = isSuccess;
   protected readonly isLoadingState = isLoading;

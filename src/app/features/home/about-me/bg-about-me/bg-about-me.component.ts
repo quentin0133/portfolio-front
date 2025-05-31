@@ -19,9 +19,9 @@ import { Application, Assets, Sprite, Ticker } from 'pixi.js';
   styleUrl: './bg-about-me.component.css',
 })
 export class BgAboutMeComponent implements OnInit, AfterViewInit, OnDestroy {
-  readonly BG_TEXT_PATH: string = '/assets/time/bg-about-me-time.jpg';
-  readonly SUN_TEXT_PATH: string = '/assets/time/sun/sun.png';
-  readonly HALO_TEXT_PATH: string = '/assets/time/sun/halo.png';
+  readonly BG_TEXT_PATH: string = '/assets/time/bg-about-me-time.webp';
+  readonly SUN_TEXT_PATH: string = '/assets/time/sun/sun.webp';
+  readonly HALO_TEXT_PATH: string = '/assets/time/sun/halo.webp';
 
   @ViewChild('pixiContainer')
   pixiContainer!: ElementRef<HTMLDivElement>;
@@ -71,7 +71,7 @@ export class BgAboutMeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isVisible = entries[0].isIntersecting;
         this.updateBackgroundSafe(this.isVisible, this.isDark);
       },
-      { threshold: 0.8 }, // 80% visible = déclenchement
+      { threshold: 0.1 }, // 80% visible = trigger
     );
 
     this.intersectionSubscription.observe(this.elementRef.nativeElement);
@@ -144,7 +144,8 @@ export class BgAboutMeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   lightModeTicker(time: Ticker): void {
-    if (!this.sun || !this.halo || this.sun.destroyed || this.halo.destroyed) return;
+    if (!this.sun || !this.halo || this.sun.destroyed || this.halo.destroyed)
+      return;
 
     const scale = 0.6 + Math.sin(performance.now() / 5000) * 0.1;
     this.sun.scale.set(scale);

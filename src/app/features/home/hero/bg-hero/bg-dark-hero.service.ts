@@ -1,13 +1,23 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
-import * as THREE from 'three';
+import {
+  Color, Material, Mesh,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  ShaderMaterial,
+  TextureLoader,
+  Texture,
+  Vector2,
+  WebGLRenderer
+} from 'three';
 
 @Injectable({ providedIn: 'root' })
 export class BgDarkHeroService {
   private canvas: HTMLCanvasElement | undefined;
-  private renderer: THREE.WebGLRenderer | undefined;
-  private scene: THREE.Scene = new THREE.Scene();
-  private camera: THREE.PerspectiveCamera | undefined;
-  private plane: THREE.Mesh | undefined;
+  private renderer!: WebGLRenderer | undefined;
+  private scene: Scene = new Scene();
+  private camera: PerspectiveCamera | undefined;
+  private plane: Mesh | undefined;
   private planeWidth: number | undefined;
   private planeHeight: number | undefined;
 
@@ -25,19 +35,20 @@ export class BgDarkHeroService {
         this.plane.geometry.dispose();
       }
       if (this.plane.material) {
-        (this.plane.material as THREE.Material).dispose();
+        (this.plane.material as Material).dispose();
       }
     }
 
     if (this.scene) {
       this.scene.traverse((object) => {
-        if (object instanceof THREE.Mesh) {
-          if (object.geometry) object.geometry.dispose();
-          if (object.material) {
-            if (Array.isArray(object.material)) {
-              object.material.forEach((material) => material.dispose());
+        let mesh = object as Mesh;
+        if (mesh.isMesh) {
+          if (mesh.geometry) mesh.geometry.dispose();
+          if (mesh.material) {
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach((material) => material.dispose());
             } else {
-              object.material.dispose();
+              mesh.material.dispose();
             }
           }
         }
@@ -48,7 +59,6 @@ export class BgDarkHeroService {
 
     if (this.renderer) {
       this.renderer.dispose();
-      this.renderer = undefined;
     }
 
     this.canvas = undefined;
@@ -70,7 +80,7 @@ export class BgDarkHeroService {
     this.updatePlaneSize();
 
     if (this.plane) {
-      const material = this.plane.material as THREE.ShaderMaterial;
+      const material = this.plane.material as ShaderMaterial;
       material.uniforms['uDisplacement'].value = this.getBlackHolePos();
     }
   }
@@ -78,11 +88,10 @@ export class BgDarkHeroService {
   initThreeJS(canvas: ElementRef<HTMLCanvasElement>): void {
     this.canvas = canvas.nativeElement;
 
-    // Initialisation scène, caméra et rendu
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x000000);
+    this.scene = new Scene();
+    this.scene.background = new Color(0x000000);
 
-    this.camera = new THREE.PerspectiveCamera(
+    this.camera = new PerspectiveCamera(
       75,
       this.canvas.offsetWidth / this.canvas.offsetHeight,
       0.1,
@@ -90,17 +99,17 @@ export class BgDarkHeroService {
     );
     this.camera.position.z = 5;
 
-    this.renderer = new THREE.WebGLRenderer({
+    this.renderer = new WebGLRenderer({
       canvas: this.canvas,
       alpha: true,
-      antialias: true
+      antialias: true,
     });
     this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
 
     // Charger la texture
-    const textureLoader = new THREE.TextureLoader();
+    const textureLoader = new TextureLoader();
     textureLoader.load(
-      'assets/space/black-hole/texture-effect-black-hole.png',
+      'assets/space/black-hole/texture-effect-black-hole.webp',
       (texture) => {
         texture.flipY = false;
         this.createPlane(texture);
@@ -110,12 +119,19 @@ export class BgDarkHeroService {
     );
   }
 
-  private getBlackHolePos(): THREE.Vector2 {
+  private getBlackHolePos(): Vector2 {
     const containerElement = document.getElementById('hero-container');
     const imageElement = document.getElementById('black-hole');
 
-    if (!this.canvas || !this.camera || !this.planeWidth || !this.planeHeight || !containerElement || !imageElement)
-      return new THREE.Vector2(0, 0);
+    if (
+      !this.canvas ||
+      !this.camera ||
+      !this.planeWidth ||
+      !this.planeHeight ||
+      !containerElement ||
+      !imageElement
+    )
+      return new Vector2(0, 0);
 
     const containerRect = containerElement.getBoundingClientRect();
     const imageRect = imageElement.getBoundingClientRect();
@@ -134,22 +150,19 @@ export class BgDarkHeroService {
       imageRect.height / 2;
 
     if (canvasAspect <= textureAspect) {
-      const widthDiff = (canvasHeight * textureAspect) - canvasWidth;
+      const widthDiff = canvasHeight * textureAspect - canvasWidth;
       const offsetFactor = (relativeX - canvasWidth / 2) / (2 * canvasWidth);
       relativeX -= widthDiff * offsetFactor;
     }
 
-    return new THREE.Vector2(
-      relativeX / canvasWidth,
-      relativeY / canvasHeight,
-    );
+    return new Vector2(relativeX / canvasWidth, relativeY / canvasHeight);
   }
 
-  private createPlane(texture: THREE.Texture) {
+  private createPlane(texture: Texture) {
     this.updatePlaneSize(texture);
 
-    const geometry = new THREE.PlaneGeometry(this.planeWidth, this.planeHeight);
-    const material = new THREE.ShaderMaterial({
+    const geometry = new PlaneGeometry(this.planeWidth, this.planeHeight);
+    const material = new ShaderMaterial({
       uniforms: {
         u_time: { value: 0 },
         uDisplacement: { value: this.getBlackHolePos() },
@@ -159,26 +172,26 @@ export class BgDarkHeroService {
       fragmentShader: this.fragmentShader(),
     });
 
-    this.plane = new THREE.Mesh(geometry, material);
+    this.plane = new Mesh(geometry, material);
     this.plane.position.set(0, 0, 0);
     this.scene.add(this.plane);
   }
 
   private updatePlaneSize(
-    texture: THREE.Texture | undefined = undefined,
+    texture: Texture | undefined = undefined,
   ): void {
     if (!this.camera || !this.canvas) return;
 
     if (this.plane) {
       if (!texture) {
-        texture = (this.plane.material as THREE.ShaderMaterial).uniforms[
+        texture = (this.plane.material as ShaderMaterial).uniforms[
           'uTexture'
         ].value;
       }
 
-      (this.plane.material as THREE.ShaderMaterial).uniforms[
+      (this.plane.material as ShaderMaterial).uniforms[
         'uDisplacement'
-      ].value = new THREE.Vector2(0, 0);
+      ].value = new Vector2(0, 0);
     }
 
     if (!texture) return;
@@ -208,7 +221,7 @@ export class BgDarkHeroService {
 
     if (this.plane) {
       this.plane.geometry.dispose();
-      this.plane.geometry = new THREE.PlaneGeometry(
+      this.plane.geometry = new PlaneGeometry(
         this.planeWidth,
         this.planeHeight,
       );
@@ -242,7 +255,7 @@ export class BgDarkHeroService {
 
     if (this.plane) {
       const time = performance.now() * 0.001;
-      const material = this.plane.material as THREE.ShaderMaterial;
+      const material = this.plane.material as ShaderMaterial;
       material.uniforms['u_time'].value = time;
     }
 
@@ -264,7 +277,7 @@ export class BgDarkHeroService {
         vec2 uResolution = uResolution;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
-  `;
+    `;
   }
 
   private fragmentShader(): string {
@@ -317,11 +330,9 @@ export class BgDarkHeroService {
           float h = height(transformedUv);
           vec3 norm = normal(transformedUv);
 
-          // Calculer la distance entre l'UV transformé et la position de départ (vUv)
           float distanceToTransformed = length(uv - transformedUv);
 
-          // Créer un dégradé doux avec smoothstep ou exponentielle
-          float smoothFactor = smoothstep(0.25, 1.6, 1.0-dist); // Ajuster les valeurs pour un dégradé doux
+          float smoothFactor = smoothstep(0.25, 1.6, 1.0-dist); // Adjust values for a smoother gradient
 
           gl_FragColor = mix(vec4(0.0, 0.0, 0.0, 1.0),
                         mix(texture(uTexture, transformedUv),

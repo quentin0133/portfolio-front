@@ -1,21 +1,26 @@
 <div class="relative bg-blue-500 dark:bg-neutral-700">
-      <textarea class="peer px-2 pt-5 py-1 outline-0 block w-full transition-colors ease-in-out duration-200 border-b-4 border-b-cyan-300 text-sm placeholder:text-transparent placeholder:select-none focus:border-blue-600 focus:border-t-transparent focus:border-x-transparent focus:border-b-white focus:ring-0 disabled:opacity-50 disabled:pointer-events-none dark:border-b-neutral-600 dark:text-neutral-300 dark:focus:ring-neutral-600 dark:focus:border-b-neutral-200
-        bg-transparent
-        resize-none
-        h-52
-        text-cyan-100
-        focus:pb-1
-        focus:text-white
-        [&:not(:placeholder-shown)]:pb-1
-        max-h-52" id="email-message" placeholder="Écrivez votre message"
-        (input)="onChange($event)"
-        (blur)="onTouched()"
-        [value]="value"
-        [placeholder]="placeholder"
-        [id]="id + '-textarea'"
-        [name]="name + '-textarea'"
-      ></textarea>
-  <label class="absolute top-0 start-0 px-2 py-2 text-sm pointer-events-none transition-all ease-in-out duration-200 border border-transparent origin-[0_0] peer-disabled:opacity-50 peer-disabled:pointer-events-none
+  <div
+    class="px-2 pt-6 pb-7 border-b-4"
+    [ngClass]="isFocus ? 'border-b-white dark:focus:border-b-neutral-200' : 'border-b-cyan-300 dark:border-b-neutral-600'"
+  >
+    <textarea class="peer outline-0 block w-full transition-colors ease-in-out duration-200 text-sm placeholder:text-transparent placeholder:select-none focus:ring-0 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-300 dark:focus:ring-neutral-600
+      bg-transparent
+      resize-none
+      h-52
+      text-cyan-100
+      focus:pb-1
+      focus:text-white
+      [&:not(:placeholder-shown)]:pb-1
+      max-h-52" id="email-message" placeholder="Écrivez votre message"
+              (input)="onChange($event)"
+              (focus)="onFocus()"
+              (blur)="onBlur()"
+              [value]="value"
+              [placeholder]="placeholder"
+              [id]="id + '-textarea'"
+              [name]="name + '-textarea'"
+    ></textarea>
+    <label class="absolute top-0 start-0 px-2 py-2 text-sm pointer-events-none transition-all ease-in-out duration-200 border border-transparent origin-[0_0] peer-disabled:opacity-50 peer-disabled:pointer-events-none
         font-bold
         text-cyan-100
         peer-focus:text-xs
@@ -25,6 +30,10 @@
         peer-[:not(:placeholder-shown)]:text-xs
         peer-[:not(:placeholder-shown)]:-translate-y-1.5
         dark:text-neutral-400" [for]="id + '-textarea'">
-    {{label}}
-  </label>
+      {{label}}
+    </label>
+  </div>
+  <div *ngIf="maxlength" class="absolute bottom-0 left-0 px-2 py-2">
+    {{ value.length }} / {{ maxlength }}
+  </div>
 </div>

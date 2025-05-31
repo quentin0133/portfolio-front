@@ -1,4 +1,10 @@
-import { Directive, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 
 @Directive({
   selector: '[elementReady]',

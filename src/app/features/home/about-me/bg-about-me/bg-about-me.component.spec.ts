@@ -8,9 +8,8 @@ describe('BgContactComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BgAboutMeComponent]
-    })
-    .compileComponents();
+      imports: [BgAboutMeComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BgAboutMeComponent);
     component = fixture.componentInstance;

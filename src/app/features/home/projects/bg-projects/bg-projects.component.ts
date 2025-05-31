@@ -16,7 +16,7 @@ import {
 import { getRandomArbitrary } from '../../../../shared/tools/js-native-utils';
 import { ThemeService } from '../../../../shared/services/theme/theme.service';
 import { Subscription } from 'rxjs';
-import {lerp} from "three/src/math/MathUtils.js";
+import { lerp } from 'three/src/math/MathUtils.js';
 
 @Component({
   selector: 'app-bg-projects',
@@ -26,11 +26,11 @@ import {lerp} from "three/src/math/MathUtils.js";
   styleUrl: './bg-projects.component.css',
 })
 export class BgProjectsComponent implements AfterViewInit, OnDestroy {
-  readonly STAR_TEXTURE_PATH: string = '/assets/space/star.png';
-  readonly BG_LIGHT_TEXTURE_PATH: string = '/assets/time/bg-projects-time.jpg';
-  readonly CLOUD_1_TEXTURE_PATH: string = '/assets/time/clouds/cloud_1.png';
-  readonly CLOUD_2_TEXTURE_PATH: string = '/assets/time/clouds/cloud_2.png';
-  readonly CLOUD_3_TEXTURE_PATH: string = '/assets/time/clouds/cloud_3.png';
+  readonly STAR_TEXTURE_PATH: string = '/assets/space/star.webp';
+  readonly BG_LIGHT_TEXTURE_PATH: string = '/assets/time/bg-projects-time.webp';
+  readonly CLOUD_1_TEXTURE_PATH: string = '/assets/time/clouds/cloud_1.webp';
+  readonly CLOUD_2_TEXTURE_PATH: string = '/assets/time/clouds/cloud_2.webp';
+  readonly CLOUD_3_TEXTURE_PATH: string = '/assets/time/clouds/cloud_3.webp';
   readonly SCROLL_HEIGHT: number = 300;
 
   @ViewChild('pixiContainer', { static: true })
@@ -93,7 +93,7 @@ export class BgProjectsComponent implements AfterViewInit, OnDestroy {
 
         this.updateBackgroundSafe(this.isVisible, this.isDarkMode);
       },
-      { threshold: 0.2 },
+      { threshold: 0.1 },
     );
 
     this.visibleObserver.observe(this.elementRef.nativeElement);
@@ -103,15 +103,14 @@ export class BgProjectsComponent implements AfterViewInit, OnDestroy {
     this.isVisible = false;
     this.visibleObserver?.disconnect();
     this.themeObserver?.unsubscribe();
-    Promise.all([this.clearLight(), this.clearDark()])
-      .then(() => {
-        for (let child of this.app.stage.children) {
-          child.destroy(true);
-        }
-        this.canvas?.remove();
-        this.canvas = undefined;
-        this.app.destroy(true, { children: true, texture: true });
-      })
+    Promise.all([this.clearLight(), this.clearDark()]).then(() => {
+      for (let child of this.app.stage.children) {
+        child.destroy(true);
+      }
+      this.canvas?.remove();
+      this.canvas = undefined;
+      this.app.destroy(true, { children: true, texture: true });
+    });
   }
 
   private async fallingStarsEffect(numStars: number): Promise<void> {

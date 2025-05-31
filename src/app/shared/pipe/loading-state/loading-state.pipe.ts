@@ -1,5 +1,5 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {catchError, map, Observable, of, startWith} from 'rxjs';
+import { Pipe, PipeTransform } from '@angular/core';
+import { catchError, map, Observable, of, startWith } from 'rxjs';
 
 interface LoadingState {
   state: 'loading';
@@ -19,12 +19,12 @@ export type State<T> = LoadingState | SuccessState<T> | ErrorState;
 
 @Pipe({
   name: 'loadingState',
-  standalone: true
+  standalone: true,
 })
 export class LoadingStatePipe implements PipeTransform {
   transform<T>(val: Observable<T>): Observable<State<T>> {
     return val.pipe(
-      map((data) => ({ state: 'success', data } as SuccessState<T>)),
+      map((data) => ({ state: 'success', data }) as SuccessState<T>),
       startWith({ state: 'loading' } as LoadingState),
       catchError((error) => of({ state: 'error', error } as ErrorState)),
     );

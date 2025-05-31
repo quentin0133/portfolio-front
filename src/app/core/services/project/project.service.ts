@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {environment} from "../../../../environments/environment";
-import {Project} from "../../models/project";
+import { environment } from '../../../../environments/environment';
+import { Project } from '../../models/project';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,6 @@ export class ProjectService {
   constructor(private http: HttpClient) {}
 
   findAll(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.ENDPOINT)
+    return this.http.get<Project[]>(this.ENDPOINT);
   }
 }

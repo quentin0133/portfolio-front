@@ -1,19 +1,20 @@
-import {Component, forwardRef, Input} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
+import { Component, forwardRef, Input } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {NgClass, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-textarea',
   standalone: true,
-  imports: [],
+  imports: [NgIf, NgClass],
   templateUrl: './textarea.component.html',
   styleUrl: './textarea.component.css',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => TextareaComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class TextareaComponent implements ControlValueAccessor {
   @Input()
@@ -23,6 +24,9 @@ export class TextareaComponent implements ControlValueAccessor {
   id!: string;
 
   @Input()
+  maxlength?: string;
+
+  @Input()
   placeholder: string = '';
 
   @Input()
@@ -30,6 +34,8 @@ export class TextareaComponent implements ControlValueAccessor {
 
   @Input()
   value: string = '';
+
+  isFocus: boolean = false;
 
   private onChangeCallback: (value: string) => void = () => {};
   private onTouchedCallback: () => void = () => {};
@@ -54,5 +60,14 @@ export class TextareaComponent implements ControlValueAccessor {
 
   writeValue(value: string): void {
     this.value = value || '';
+  }
+
+  onBlur() {
+    this.isFocus = false;
+    this.onTouched();
+  }
+
+  onFocus() {
+    this.isFocus = true;
   }
 }

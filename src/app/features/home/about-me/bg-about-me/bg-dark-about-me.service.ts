@@ -1,13 +1,19 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
-import * as THREE from 'three';
+import {
+  Color,
+  Mesh,
+  PerspectiveCamera, PlaneGeometry, Scene, ShaderMaterial,
+  WebGLRenderer
+
+} from 'three';
 
 @Injectable({ providedIn: 'root' })
 export class BgDarkAboutMeService {
   private canvas!: HTMLCanvasElement;
-  private renderer!: THREE.WebGLRenderer;
-  private scene: THREE.Scene = new THREE.Scene();
-  private camera!: THREE.PerspectiveCamera;
-  private plane!: THREE.Mesh;
+  private renderer!: WebGLRenderer;
+  private scene: Scene = new Scene();
+  private camera!: PerspectiveCamera;
+  private plane!: Mesh;
 
   private frameId: number | null = null;
 
@@ -19,13 +25,14 @@ export class BgDarkAboutMeService {
     }
 
     this.scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        if (object.geometry) object.geometry.dispose();
-        if (object.material) {
-          if (Array.isArray(object.material)) {
-            object.material.forEach((material) => material.dispose());
+      let mesh = object as Mesh;
+      if (mesh.isMesh) {
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((material) => material.dispose());
           } else {
-            object.material.dispose();
+            mesh.material.dispose();
           }
         }
       }
@@ -51,11 +58,10 @@ export class BgDarkAboutMeService {
   initThreeJS(canvas: ElementRef<HTMLCanvasElement>): void {
     this.canvas = canvas.nativeElement;
 
-    // Initialisation scène, caméra et rendu
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x000000);
+    this.scene = new Scene();
+    this.scene.background = new Color(0x000000);
 
-    this.camera = new THREE.PerspectiveCamera(
+    this.camera = new PerspectiveCamera(
       75,
       this.canvas.offsetWidth / this.canvas.offsetHeight,
       0.1,
@@ -63,25 +69,25 @@ export class BgDarkAboutMeService {
     );
     this.camera.position.z = 5;
 
-    this.renderer = new THREE.WebGLRenderer({
+    this.renderer = new WebGLRenderer({
       canvas: this.canvas,
       alpha: true,
-      antialias: true
+      antialias: true,
     });
     this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
 
-    const geometry = new THREE.PlaneGeometry(16, 16);
+    const geometry = new PlaneGeometry(16, 16);
     let rand = Math.random() * 1000;
-    const material = new THREE.ShaderMaterial({
+    const material = new ShaderMaterial({
       vertexShader: this.vertexShader(),
       fragmentShader: this.fragmentShader(),
       uniforms: {
         u_time: { value: 0.0 },
-        u_seed: { value: rand }
-      }
+        u_seed: { value: rand },
+      },
     });
 
-    this.plane = new THREE.Mesh(geometry, material);
+    this.plane = new Mesh(geometry, material);
     this.scene.add(this.plane);
   }
 
@@ -108,7 +114,7 @@ export class BgDarkAboutMeService {
       this.render();
     });
 
-    const material = this.plane.material as THREE.ShaderMaterial;
+    const material = this.plane.material as ShaderMaterial;
     material.uniforms['u_time'].value = performance.now() * 0.001;
 
     this.renderer.render(this.scene, this.camera);
@@ -154,9 +160,9 @@ export class BgDarkAboutMeService {
       float fbm(vec2 p) {
           float value = 0.0;
           float amplitude = 0.9;
-          float frequency = 0.5;
+          float frequency = 0.4;
 
-          for (int i = 0; i < 5; i++) {
+          for (int i = 0; i < 8; i++) {
               value += amplitude * noise(p * frequency);
               frequency *= 2.0;
               amplitude *= 0.5;
@@ -174,8 +180,8 @@ export class BgDarkAboutMeService {
           vec2 uv = vUv * mix(10.0, 20.0, u_seed / 1000.0);
 
           // Apply the flow field for natural movement
-          uv += flow(uv) * 0.1;
-          uv.x += sin(u_time * 0.2) * 0.5;
+          uv += flow(uv) * 0.3;
+          uv.x += sin(u_time * 0.2) * 0.8;
           uv.y += cos(u_time * 0.05) * 0.1;
 
           float blackCloud = fbm(vec2(uv.x + u_time * 0.05, uv.y));
@@ -185,14 +191,7 @@ export class BgDarkAboutMeService {
 
           vec3 color = vec3(0.03, 0.03, 0.03);
 
-          if (alpha < 0.6) {
-            alpha = 0.0;
-          }
-          else {
-            alpha -= 0.5;
-          }
-
-          gl_FragColor = vec4(color, alpha - 0.05);
+          gl_FragColor = vec4(color, alpha - 0.25);
       }
     `;
   }

@@ -1,8 +1,15 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {BgDarkContactService} from "./bg-dark-contact.service";
-import {BgLightContactService} from "./bg-light-contact.service";
-import {Subscription} from "rxjs";
-import {ThemeService} from "../../../../shared/services/theme/theme.service";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { BgDarkContactService } from './bg-dark-contact.service';
+import { BgLightContactService } from './bg-light-contact.service';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../../shared/services/theme/theme.service';
 
 @Component({
   selector: 'app-bg-contact',
@@ -12,9 +19,12 @@ import {ThemeService} from "../../../../shared/services/theme/theme.service";
   styleUrl: './bg-contact.component.css',
 })
 export class BgContactComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('canvas', { static: true })
+  canvas!: ElementRef<HTMLCanvasElement>;
+
   private visibilityObserver: IntersectionObserver | undefined;
   private isVisible: boolean = false;
-  private service: any;
+  private service!: BgDarkContactService | BgLightContactService;
 
   private themeChangeSubscription!: Subscription;
 
@@ -23,8 +33,7 @@ export class BgContactComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly bgLightContactService: BgLightContactService,
     private readonly elementRef: ElementRef,
     private readonly themeService: ThemeService,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.service = this.themeService.isDarkThemePreferred()
@@ -48,7 +57,7 @@ export class BgContactComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isVisible = entries[0].isIntersecting;
         this.updateShading();
       },
-      { threshold: 0.1 }, // 10% visible = déclenchement
+      { threshold: 0.1 }, // 80% visible = trigger
     );
 
     this.visibilityObserver.observe(this.elementRef.nativeElement);
@@ -65,7 +74,7 @@ export class BgContactComponent implements OnInit, AfterViewInit, OnDestroy {
   private updateShading() {
     if (this.isVisible) {
       this.service
-        .initThreeJS(this.elementRef)
+        .initThreeJS(this.canvas)
         .then(() => this.service.animate());
     } else {
       this.service.cleanUp();

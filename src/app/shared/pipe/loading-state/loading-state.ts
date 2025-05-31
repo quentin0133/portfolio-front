@@ -1,4 +1,4 @@
-import {LoadingStatePipe} from "./loading-state.pipe";
+import { LoadingStatePipe } from './loading-state.pipe';
 
 describe('LoadingStatePipe', () => {
   it('create an instance', () => {

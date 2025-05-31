@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {NgOptimizedImage, NgStyle} from '@angular/common';
+import { NgOptimizedImage, NgStyle } from '@angular/common';
 import {
   animate,
   keyframes,

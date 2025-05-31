@@ -1,48 +1,67 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
-import * as THREE from 'three';
 import {
   AnimationMixer,
+  Clock, Mesh,
   PerspectiveCamera,
   PMREMGenerator,
+  Scene,
   TextureLoader,
+  Vector2,
+  WebGLRenderer,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
-import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer.js";
-import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass.js";
-import {UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 
 @Injectable({ providedIn: 'root' })
 export class BgLightContactService {
   private canvas!: HTMLCanvasElement;
-  private readonly renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
+  private renderer!: WebGLRenderer;
   private composer!: EffectComposer;
-  private scene: THREE.Scene = new THREE.Scene();
-  private camera!: THREE.PerspectiveCamera;
+  private scene: Scene = new Scene();
+  private camera!: PerspectiveCamera;
   private mixer!: AnimationMixer;
-  private readonly clock = new THREE.Clock();
-  private readonly pmremGenerator: PMREMGenerator;
+  private readonly clock = new Clock();
+  private pmremGenerator!: PMREMGenerator;
+
+  bokehPass?: BokehPass;
 
   private frameId: number | null = null;
 
-  public constructor(private readonly ngZone: NgZone) {
-    this.pmremGenerator = new PMREMGenerator(this.renderer);
-    this.pmremGenerator.compileEquirectangularShader();
-  }
+  public constructor(private readonly ngZone: NgZone) {}
 
   public cleanUp(): void {
     if (this.frameId != null) {
       cancelAnimationFrame(this.frameId);
     }
 
-    if (this.renderer?.domElement.parentNode) {
-      this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
-    }
+    this.scene.traverse((object) => {
+      let mesh = object as Mesh;
+      if (mesh.isMesh) {
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((material) => material.dispose());
+          } else {
+            mesh.material.dispose();
+          }
+        }
+      }
+    });
 
     this.scene.clear();
 
     if (this.composer) {
       this.composer.dispose();
+    }
+
+    if (this.renderer) {
+      this.renderer.dispose();
+      this.renderer.domElement.width = 1;
+      this.renderer.domElement.height = 1;
     }
   }
 
@@ -60,15 +79,27 @@ export class BgLightContactService {
   async initThreeJS(canvas: ElementRef<HTMLCanvasElement>): Promise<void> {
     this.canvas = canvas.nativeElement;
 
-    this.scene = new THREE.Scene();
-    new TextureLoader()
-      .loadAsync('assets/time/hourglass/autumn-field-background.png')
-      .then((text) => (this.scene.background = text));
+    this.renderer = new WebGLRenderer({
+      canvas: this.canvas,
+      depth: true,
+    });
+
+    this.renderer.autoClear = false;
+    this.renderer.setClearColor(0x000000);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
 
     this.composer = new EffectComposer(this.renderer);
-    this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
     this.composer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
-    this.canvas.appendChild(this.renderer.domElement);
+
+    this.pmremGenerator = new PMREMGenerator(this.renderer);
+    this.pmremGenerator.compileEquirectangularShader();
+
+    this.scene = new Scene();
+
+    new TextureLoader()
+      .loadAsync('assets/time/hourglass/autumn-field-background.webp')
+      .then((text) => (this.scene.background = text));
 
     new EXRLoader()
       .loadAsync('assets/time/hourglass/table_mountain_2_puresky_1k.exr')
@@ -79,47 +110,51 @@ export class BgLightContactService {
         hdrTexture.dispose();
       });
 
-    new GLTFLoader()
-      .loadAsync('assets/time/hourglass/model_hourglass_3D.glb')
-      .then((gltf) => {
-        const scene = gltf.scene;
-        this.scene.rotation.set(1.626, 0, 1.25);
-        this.scene.add(scene);
+    const gltf = await new GLTFLoader().loadAsync(
+      'assets/time/hourglass/model_hourglass_3D.glb',
+    );
 
-        const camera = gltf.cameras?.[0];
+    const sceneGltf = gltf.scene;
+    this.scene.rotation.set(1.626, 0, 1.25);
+    this.scene.add(sceneGltf);
 
-        if (camera) {
-          scene.remove(this.camera);
-          this.camera = camera as PerspectiveCamera;
-          //this.camera.setFocalLength(this.focalLengthToFov(50, 36));
-          scene.add(this.camera);
+    const camera = gltf.cameras?.[0];
 
-          this.composer.addPass(new RenderPass(this.scene, this.camera));
+    if (camera) {
+      sceneGltf.remove(this.camera);
+      this.camera = camera as PerspectiveCamera;
+      this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+      this.camera.updateProjectionMatrix();
+      sceneGltf.add(this.camera);
+    } else {
+      console.error('No camera found in glTF export');
+    }
 
-          const bloomPass = new UnrealBloomPass(
-            new THREE.Vector2(
-              this.canvas.offsetWidth,
-              this.canvas.offsetHeight,
-            ),
-            0.35, // strength
-            1, // radius
-            0.85, // threshold
-          );
-          this.composer.addPass(bloomPass);
-        } else {
-          console.error('Pas de caméra trouvée dans l’export glTF');
-        }
+    const renderPass = new RenderPass(this.scene, this.camera);
 
-        // Animation
-        this.mixer = new THREE.AnimationMixer(scene);
-        gltf.animations.forEach((clip) => {
-          this.mixer.clipAction(clip).play();
-        });
-      });
-  }
+    this.bokehPass = new BokehPass(this.scene, this.camera, {
+      focus: 6.5,
+      aperture: 0.008,
+      maxblur: 0.02,
+      aspect: this.canvas.offsetWidth / this.canvas.offsetHeight,
+    });
 
-  private focalLengthToFov(focalLength: number, sensorSize: number) {
-    return 2 * Math.atan(sensorSize / (2 * focalLength)) * (180 / Math.PI);
+    const bloomPass = new UnrealBloomPass(
+      new Vector2(this.canvas.offsetWidth, this.canvas.offsetHeight),
+      0.3, // strength
+      1,
+      0.85,
+    );
+
+    this.composer.addPass(renderPass);
+    this.composer.addPass(this.bokehPass);
+    this.composer.addPass(bloomPass);
+
+    // Animation
+    this.mixer = new AnimationMixer(sceneGltf);
+    gltf.animations.forEach((clip) => {
+      this.mixer.clipAction(clip).play();
+    });
   }
 
   public animate(): void {
@@ -147,6 +182,11 @@ export class BgLightContactService {
 
     const delta = this.clock.getDelta();
     if (this.mixer) this.mixer.update(delta);
+
+    // if (this.bokehPass) {
+    //   console.log(this.bokehPass.materialBokeh.uniforms['focus'].value);
+    //   this.bokehPass.materialBokeh.uniforms['focus'].value = Math.abs(Math.sin(this.clock.elapsedTime)) * 10;
+    // }
 
     this.composer.render();
   }

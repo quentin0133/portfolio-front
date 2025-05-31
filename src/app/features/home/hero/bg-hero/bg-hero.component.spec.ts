@@ -8,9 +8,8 @@ describe('BgDarkModeHeroComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BgHeroComponent]
-    })
-    .compileComponents();
+      imports: [BgHeroComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BgHeroComponent);
     component = fixture.componentInstance;

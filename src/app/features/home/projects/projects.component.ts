@@ -5,7 +5,6 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  Renderer2,
 } from '@angular/core';
 import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import {
@@ -31,7 +30,7 @@ import { TypedTemplateDirective } from '../../../shared/directives/typed-templat
 import { ProjectService } from '../../../core/services/project/project.service';
 import { ThemeService } from '../../../shared/services/theme/theme.service';
 import { FileService } from '../../../shared/services/file/file.service';
-import {BgProjectsComponent} from "./bg-projects/bg-projects.component";
+import { BgProjectsComponent } from './bg-projects/bg-projects.component';
 
 @Component({
   selector: 'app-projects',
@@ -112,6 +111,8 @@ export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   coverImageUrlCache: Map<string, string> = new Map<string, string>();
 
+  isDarkTheme!: boolean;
+
   get currentProject(): Project {
     return this.projects[this.projectCurrentIndexTemp];
   }
@@ -125,16 +126,9 @@ export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.projectsObservable = this.projectService.findAll();
-    this.projectService
-      .findAll()
-      .pipe(
-        tap((projects) => (this.projects = projects)),
-        mergeMap((projects) => from(projects)),
-        mergeMap((project) => this.getFile(project.coverImage.storedFileName)),
-        tap((file) => this.addObjectUrl(file)),
-      )
-      .subscribe();
+    this.isDarkTheme = this.themeService.isDarkThemePreferred();
+    this.themeService.isDarkMode.subscribe((isDark) => this.isDarkTheme = isDark)
+    this.retrieveProjects();
   }
 
   ngAfterViewInit(): void {
@@ -148,7 +142,7 @@ export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
           this.setTextAnimation('out');
         }
       },
-      { threshold: 0.8 },
+      { threshold: 0.1 },
     );
 
     this.visibleObserver.observe(this.elementRef.nativeElement);
@@ -161,8 +155,17 @@ export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.coverImageUrlCache.clear();
   }
 
-  reload() {
+  retrieveProjects() {
     this.projectsObservable = this.projectService.findAll();
+    this.projectService
+      .findAll()
+      .pipe(
+        tap((projects) => (this.projects = projects)),
+        mergeMap((projects) => from(projects)),
+        mergeMap((project) => this.getFile(project.coverImage.storedFileName)),
+        tap((file) => this.addObjectUrl(file)),
+      )
+      .subscribe();
   }
 
   selectTab(newIndexTab: number) {
@@ -192,10 +195,6 @@ export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openVideoModal() {
     this.showVideoModal = true;
-  }
-
-  isDarkMode(): Observable<boolean> {
-    return this.themeService.isDarkMode;
   }
 
   getFile(url: string): Observable<File> {
