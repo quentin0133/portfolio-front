@@ -13,8 +13,14 @@
         [style]="'color: ' + (isDarkMode ? statusJob.statusJobBgColorDark : statusJob.statusJobBgColorLight) + '; border-color: ' + (isDarkMode ? statusJob.statusJobBgColorDark : statusJob.statusJobBgColorLight) + ';'"
       >
         <span class="flex relative">
-          <span class="animate-ping absolute size-3.5 inline-block rounded-full bg-green-600 dark:bg-green-500"></span>
-          <span class="size-3.5 inline-block rounded-full bg-green-600 dark:bg-green-500"></span>
+          <span
+            class="animate-ping absolute size-3.5 inline-block rounded-full"
+            [style]="'background-color: ' + (isDarkMode ? statusJob.statusJobBgColorDark : statusJob.statusJobBgColorLight) + ';'"
+          ></span>
+          <span
+            class="size-3.5 inline-block rounded-full"
+            [style]="'background-color: ' + (isDarkMode ? statusJob.statusJobBgColorDark : statusJob.statusJobBgColorLight) + ';'"
+          ></span>
         </span>
         Statut : {{ statusJob.statusJob }}
       </span>
