@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
     "@pixi/filter-glow": "^5.2.1",
+    "@vercel/speed-insights": "^1.2.0",
     "gsap": "^3.12.7",
     "ngx-toastr": "^19.0.0",
     "ngx-youtube-player": "^17.1.1",

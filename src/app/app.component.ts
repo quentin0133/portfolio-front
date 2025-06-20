@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
+  ElementRef, HostListener,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -18,44 +18,32 @@ import { ThemeService } from './shared/services/theme/theme.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AppComponent implements AfterViewInit {
   @ViewChild('navView') nav: ElementRef | undefined;
   @ViewChild('mainView') main: ElementRef | undefined;
-
-  private mediaQueryListener:
-    | ((event: MediaQueryListEvent) => void)
-    | undefined;
 
   constructor(
     private readonly themeService: ThemeService,
     private readonly renderer: Renderer2,
   ) {}
 
-  ngOnInit(): void {
-    this.themeService.updateTheme();
-    this.mediaQueryListener = () => this.themeService.updateTheme();
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', this.mediaQueryListener);
-  }
-
   ngAfterViewInit(): void {
+    requestAnimationFrame(() => this.updateMainHeight());
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.updateMainHeight();
+  }
+
+  private updateMainHeight() {
     const navHeight = this.nav?.nativeElement.clientHeight || 0;
-    this.renderer.setStyle(
-      this.main?.nativeElement,
-      'height',
-      `calc(100vh - ${navHeight}px)`,
-    );
-  }
-
-  ngOnDestroy() {
-    if (this.mediaQueryListener)
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .removeEventListener('change', this.mediaQueryListener);
-  }
-
-  onThemeChange() {
-    this.themeService.updateTheme();
+    if (navHeight > 0) {
+      this.renderer.setStyle(
+        this.main?.nativeElement,
+        'height',
+        `calc(100vh - ${navHeight}px)`,
+      );
+    }
   }
 }

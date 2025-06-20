@@ -9,7 +9,7 @@
     <div id="status" *ngIf="statusJob | loadingState | async as statusJobState">
       <span
         *ngIf="isSuccess(statusJobState) && statusJobState.data as statusJob"
-        class="inline-flex md:text-base sm:text-sm text-xs items-center gap-x-2 py-1.5 px-3 rounded-full font-medium bg-slate-100 border-4 dark:bg-neutral-800 dark:bg-opacity-75"
+        class="inline-flex md:text-base sm:text-sm text-xs items-center gap-x-2 py-1.5 px-3 rounded-full font-medium bg-slate-100 border-4 dark:bg-neutral-800/40 dark:bg-opacity-75"
         [style]="'color: ' + (isDarkMode ? statusJob.statusJobBgColorDark : statusJob.statusJobBgColorLight) + '; border-color: ' + (isDarkMode ? statusJob.statusJobBgColorDark : statusJob.statusJobBgColorLight) + ';'"
       >
         <span class="flex relative">

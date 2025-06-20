@@ -9,6 +9,7 @@ import { NgIf } from '@angular/common';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EmailService } from '../../../core/services/email/email.service';
 import { BgContactComponent } from './bg-contact/bg-contact.component';
+import {FooterComponent} from "../../../shared/components/footer/footer.component";
 
 @Component({
   selector: 'app-contact',
@@ -21,6 +22,7 @@ import { BgContactComponent } from './bg-contact/bg-contact.component';
     NgIf,
     ToastrModule,
     BgContactComponent,
+    FooterComponent,
   ],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.css',
@@ -43,8 +45,10 @@ export class ContactComponent {
   onSubmit(event: any, ngForm: NgForm) {
     event.preventDefault();
 
+    if (this.isLoadingEmail) return;
+
     if (ngForm.invalid) {
-      Object.values(ngForm.controls).forEach(control => {
+      Object.values(ngForm.controls).forEach((control) => {
         control.markAsTouched();
       });
       return;

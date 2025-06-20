@@ -31,6 +31,7 @@ import { ProjectService } from '../../../core/services/project/project.service';
 import { ThemeService } from '../../../shared/services/theme/theme.service';
 import { FileService } from '../../../shared/services/file/file.service';
 import { BgProjectsComponent } from './bg-projects/bg-projects.component';
+import {DropdownComponent} from "../../../shared/components/dropdown/dropdown.component";
 
 @Component({
   selector: 'app-projects',
@@ -45,6 +46,7 @@ import { BgProjectsComponent } from './bg-projects/bg-projects.component';
     ModalVideoComponent,
     TypedTemplateDirective,
     BgProjectsComponent,
+    DropdownComponent,
   ],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css',
@@ -127,7 +129,9 @@ export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.isDarkTheme = this.themeService.isDarkThemePreferred();
-    this.themeService.isDarkMode.subscribe((isDark) => this.isDarkTheme = isDark)
+    this.themeService.isDarkMode.subscribe(
+      (isDark) => (this.isDarkTheme = isDark),
+    );
     this.retrieveProjects();
   }
 

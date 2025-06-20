@@ -2,6 +2,7 @@ import { FileInfo } from './file-info';
 import { ProjectCategory } from '../../shared/enums/project-category';
 import { Tag } from './tag';
 import { ProjectStatus } from '../../shared/enums/project-status';
+import {ResourceLink} from "./resource-link";
 
 export interface Project {
   tags: Tag[];
@@ -13,7 +14,7 @@ export interface Project {
   category: ProjectCategory;
   startDate: string;
   idVideo?: string;
-  gitLink?: string;
+  gitLinks: ResourceLink[];
   demoLink?: string;
   status: ProjectStatus;
 }
