@@ -1,9 +1,8 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef, HostListener,
-  OnDestroy,
-  OnInit,
+  ElementRef,
+  HostListener,
   Renderer2,
   ViewChild,
 } from '@angular/core';

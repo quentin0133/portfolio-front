@@ -73,9 +73,7 @@ export class BgContactComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private updateShading() {
     if (this.isVisible) {
-      this.service
-        .initThreeJS(this.canvas)
-        .then(() => this.service.animate());
+      this.service.initThreeJS(this.canvas).then(() => this.service.animate());
     } else {
       this.service.cleanUp();
     }

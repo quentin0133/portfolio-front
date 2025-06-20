@@ -1,7 +1,8 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
 import {
   AnimationMixer,
-  Clock, Mesh,
+  Clock,
+  Mesh,
   PerspectiveCamera,
   PMREMGenerator,
   Scene,

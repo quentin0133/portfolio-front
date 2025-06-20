@@ -31,7 +31,7 @@ import { ProjectService } from '../../../core/services/project/project.service';
 import { ThemeService } from '../../../shared/services/theme/theme.service';
 import { FileService } from '../../../shared/services/file/file.service';
 import { BgProjectsComponent } from './bg-projects/bg-projects.component';
-import {DropdownComponent} from "../../../shared/components/dropdown/dropdown.component";
+import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
 
 @Component({
   selector: 'app-projects',

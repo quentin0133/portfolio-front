@@ -1,16 +1,17 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
   EventEmitter,
   HostListener,
-  Input, NgZone, OnChanges,
+  Input,
+  OnChanges,
   Output,
-  QueryList, SimpleChanges,
+  QueryList,
+  SimpleChanges,
   TemplateRef,
-  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import {
@@ -22,7 +23,6 @@ import {
 import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common';
 import { RangePipe } from '../../pipe/range/range.pipe';
 import { ElementReadyDirective } from '../../directives/element-ready.directive';
-import {take} from "rxjs";
 
 @Component({
   selector: 'app-slider',
@@ -65,8 +65,7 @@ export class SliderComponent<T> implements OnChanges {
 
   currentSlidePositionX: number = 0;
 
-  constructor(private cdRef: ChangeDetectorRef) {
-  }
+  constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['state'] && !isLoading(changes['state'].currentValue)) {
@@ -115,13 +114,13 @@ export class SliderComponent<T> implements OnChanges {
     const rectCenterX = rect.left + rect.width / 2;
     const parentCenterX = parentRect.left + parentRect.width / 2;
 
-    this.currentSlidePositionX = parentCenterX - rectCenterX
+    this.currentSlidePositionX = parentCenterX - rectCenterX;
 
     this.cdRef.detectChanges();
   }
 
   async loadAllImagesAsync(images: HTMLImageElement[]): Promise<void> {
-    console.log(images)
+    console.log(images);
     const promises = images.map((img) => {
       return new Promise<void>((resolve) => {
         if (img.complete && img.naturalHeight !== 0) {
@@ -150,8 +149,6 @@ export class SliderComponent<T> implements OnChanges {
 
     return Promise.all(promises).then(() => void 0);
   }
-
-
 
   protected readonly isSuccessState = isSuccess;
   protected readonly isLoadingState = isLoading;

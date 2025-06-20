@@ -2,9 +2,11 @@ import { ElementRef, Injectable, NgZone } from '@angular/core';
 import {
   Color,
   Mesh,
-  PerspectiveCamera, PlaneGeometry, Scene, ShaderMaterial,
-  WebGLRenderer
-
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  ShaderMaterial,
+  WebGLRenderer,
 } from 'three';
 
 @Injectable({ providedIn: 'root' })

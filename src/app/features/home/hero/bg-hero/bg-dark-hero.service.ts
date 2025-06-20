@@ -1,14 +1,16 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
 import {
-  Color, Material, Mesh,
+  Color,
+  Material,
+  Mesh,
   PerspectiveCamera,
   PlaneGeometry,
   Scene,
   ShaderMaterial,
-  TextureLoader,
   Texture,
+  TextureLoader,
   Vector2,
-  WebGLRenderer
+  WebGLRenderer,
 } from 'three';
 
 @Injectable({ providedIn: 'root' })
@@ -177,21 +179,17 @@ export class BgDarkHeroService {
     this.scene.add(this.plane);
   }
 
-  private updatePlaneSize(
-    texture: Texture | undefined = undefined,
-  ): void {
+  private updatePlaneSize(texture: Texture | undefined = undefined): void {
     if (!this.camera || !this.canvas) return;
 
     if (this.plane) {
       if (!texture) {
-        texture = (this.plane.material as ShaderMaterial).uniforms[
-          'uTexture'
-        ].value;
+        texture = (this.plane.material as ShaderMaterial).uniforms['uTexture']
+          .value;
       }
 
-      (this.plane.material as ShaderMaterial).uniforms[
-        'uDisplacement'
-      ].value = new Vector2(0, 0);
+      (this.plane.material as ShaderMaterial).uniforms['uDisplacement'].value =
+        new Vector2(0, 0);
     }
 
     if (!texture) return;

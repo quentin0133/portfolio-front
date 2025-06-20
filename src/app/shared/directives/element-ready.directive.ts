@@ -18,6 +18,6 @@ export class ElementReadyDirective implements AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.elementReady.emit(this.el);
-    })
+    });
   }
 }

@@ -2,7 +2,7 @@ import { FileInfo } from './file-info';
 import { ProjectCategory } from '../../shared/enums/project-category';
 import { Tag } from './tag';
 import { ProjectStatus } from '../../shared/enums/project-status';
-import {ResourceLink} from "./resource-link";
+import { ResourceLink } from './resource-link';
 
 export interface Project {
   tags: Tag[];

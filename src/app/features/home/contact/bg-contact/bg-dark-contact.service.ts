@@ -1,5 +1,13 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
-import {Color, Mesh, PerspectiveCamera, PlaneGeometry, Scene, ShaderMaterial, WebGLRenderer} from 'three';
+import {
+  Color,
+  Mesh,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  ShaderMaterial,
+  WebGLRenderer,
+} from 'three';
 
 @Injectable({ providedIn: 'root' })
 export class BgDarkContactService {
@@ -66,7 +74,7 @@ export class BgDarkContactService {
     this.camera.position.z = 5;
 
     this.renderer = new WebGLRenderer({
-      canvas: this.canvas
+      canvas: this.canvas,
     });
     this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
 

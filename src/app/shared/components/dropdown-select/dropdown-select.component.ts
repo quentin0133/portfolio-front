@@ -55,8 +55,7 @@ export class DropdownSelectComponent implements OnInit, ControlValueAccessor {
 
   toggleMenu() {
     this.isOpen = !this.isOpen;
-    if (!this.isOpen)
-      this.onTouched();
+    if (!this.isOpen) this.onTouched();
   }
 
   selectOption(newOption: string) {
@@ -69,7 +68,7 @@ export class DropdownSelectComponent implements OnInit, ControlValueAccessor {
   }
 
   closeDropdown() {
-    console.log("Drop down close ")
+    console.log('Drop down close ');
     this.isOpen = false;
     this.onTouched();
   }

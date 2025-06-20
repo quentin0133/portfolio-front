@@ -4,11 +4,12 @@ import {
   ContentChild,
   ContentChildren,
   ElementRef,
-  HostListener, QueryList,
+  HostListener,
+  QueryList,
   TemplateRef,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
-import {NgClass, NgTemplateOutlet} from "@angular/common";
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-dropdown',
@@ -32,7 +33,8 @@ export class DropdownComponent implements AfterViewInit {
   isDropdown: boolean = false;
 
   ngAfterViewInit(): void {
-    this.dropdownRef.nativeElement.style.top = this.buttonRef.nativeElement.getBoundingClientRect().height + 'px';
+    this.dropdownRef.nativeElement.style.top =
+      this.buttonRef.nativeElement.getBoundingClientRect().height + 'px';
   }
 
   toggleDropdown() {
