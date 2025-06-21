@@ -13,11 +13,12 @@ import {
 import { HeroComponent } from './hero/hero.component';
 import { Subscription } from 'rxjs';
 import { SectionScrollService } from '../../shared/services/section-scroll/section-scroll.service';
+import {FooterComponent} from "../../shared/components/footer/footer.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [FooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

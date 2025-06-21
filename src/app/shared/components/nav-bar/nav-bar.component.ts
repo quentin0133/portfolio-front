@@ -68,4 +68,9 @@ export class NavBarComponent {
   setAnimationTrigger(index: number, value: boolean) {
     this.bouncingLetters[index] = value;
   }
+
+  navigateTo(path: string, indexScroll: number = 0) {
+    this.scrollTo(indexScroll);
+    this.router.navigateByUrl(path);
+  }
 }

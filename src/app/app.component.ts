@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
+  HostListener, OnInit,
   Renderer2,
   ViewChild,
 } from '@angular/core';
@@ -17,7 +17,7 @@ import { ThemeService } from './shared/services/theme/theme.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('navView') nav: ElementRef | undefined;
   @ViewChild('mainView') main: ElementRef | undefined;
 
@@ -25,6 +25,10 @@ export class AppComponent implements AfterViewInit {
     private readonly themeService: ThemeService,
     private readonly renderer: Renderer2,
   ) {}
+
+  ngOnInit() {
+    this.themeService.updateTheme();
+  }
 
   ngAfterViewInit(): void {
     requestAnimationFrame(() => this.updateMainHeight());
@@ -42,6 +46,12 @@ export class AppComponent implements AfterViewInit {
         this.main?.nativeElement,
         'height',
         `calc(100vh - ${navHeight}px)`,
+      );
+
+      this.renderer.setStyle(
+        this.main?.nativeElement,
+        'margin-top',
+        `${navHeight}px`,
       );
     }
   }

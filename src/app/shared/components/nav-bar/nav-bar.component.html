@@ -1,10 +1,10 @@
-<header
+<div
   class="relative flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm shadow-md sm:py-2 py-0 dark:bg-neutral-800">
   <nav class="w-full sm:max-w-[95%] mx-auto sm:px-4 sm:flex sm:items-center sm:justify-between">
     <div class="flex items-center justify-between sm:px-10 px-6 sm:py-0 py-2">
       <div
         aria-label="Brand" class="flex-none text-2xl font-semibold select-none dark:text-white">
-        <button (mouseenter)="bouncingLettersAnimation()" class="flex">
+        <button (mouseenter)="bouncingLettersAnimation()" (click)="navigateTo('/')" class="flex">
           <div
             (@bounce.done)="setAnimationTrigger(i, false)"
             *ngFor="let letter of 'Quentin Yahia'.split(''); let i = index"
@@ -47,23 +47,23 @@
          id="hs-navbar-example">
       <div class="flex flex-col text-lg gap-5 py-3 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5">
         <button class="font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:text-gray-400 dark:text-neutral-300 dark:hover:text-neutral-500 dark:focus:text-neutral-400"
-          (click)="scrollTo(0)">
+          (click)="navigateTo('/', 0)">
           Accueil
         </button>
         <button class="font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:text-gray-400 dark:text-neutral-300 dark:hover:text-neutral-500 dark:focus:text-neutral-400"
-          (click)="scrollTo(1)">
+          (click)="navigateTo('/', 1)">
           Les projets
         </button>
         <button class="font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:text-gray-400 dark:text-neutral-300 dark:hover:text-neutral-500 dark:focus:text-neutral-400"
-          (click)="scrollTo(2)">
+          (click)="navigateTo('/', 2)">
           A&#768; propos de moi
         </button>
         <button class="font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:text-gray-400 dark:text-neutral-300 dark:hover:text-neutral-500 dark:focus:text-neutral-400"
-          (click)="scrollTo(3)">
+          (click)="navigateTo('/', 3)">
           Contact
         </button>
         <app-theme-toggler class="hidden sm:block"/>
       </div>
     </div>
   </nav>
-</header>
+</div>
